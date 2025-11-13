@@ -20,17 +20,17 @@ export async function getProducts() {
     }
 }
 
-export async function getProduct(id) {
-    try {
-        const response = await fetch(`${API_URL}/products/${id}`);
+// export async function getProduct(id) {
+//     try {
+//         const response = await fetch(`${API_URL}/products/${id}`);
         
-        if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-        }
+//         if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//         }
         
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching product:', error);
-        throw error;
-  }
-}
+//         return await response.json();
+//     } catch (error) {
+//         console.error('Error fetching product:', error);
+//         throw error;
+//   }
+// }
