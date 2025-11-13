@@ -1,3 +1,5 @@
+'use client';
+
 import { getUsers } from "@/lib/cateogry";
 import useSWR from "swr";
 
