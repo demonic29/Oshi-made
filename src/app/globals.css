@@ -1,0 +1,19 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+body {
+    font-family: "Zen Kaku Gothic New", sans-serif;
+}
+
+
+.list-title{
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.list-desc{
+    font-size: 13px;
+    font-weight: 600
+}
