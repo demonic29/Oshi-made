@@ -56,9 +56,9 @@ export default function ProfileCard() {
             
             <div className="p-6">
                 <h3 className="text-lg font-semibold mb-3 text-gray-700">Account Details</h3>
-                <p className="text-sm text-gray-600 mb-2">
+                {/* <p className="text-sm text-gray-600 mb-2">
                     **User ID:** {user?.id || 'N/A'}
-                </p>
+                </p> */}
                 <p className="text-sm text-gray-600 mb-4">
                     **Authentication Method:** Google
                 </p>
