@@ -27,6 +27,8 @@ export function ItemDetailCard({item}: any) {
 
     return (
         <div className="px-4">
+
+            {/* product-image */}
             <div className="relative w-full h-[300px]">
                 <Image
                     src={item.images?.[0] || 'no-image'}
@@ -35,6 +37,8 @@ export function ItemDetailCard({item}: any) {
                     className="my-2"
                 />
             </div>
+
+            {/* product-info */}
             <div className="flex items-center mt-4 gap-4">
                 <h2 className="font-semibold mb-2 text-[24px] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
                 <p className="text-[12px] text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
@@ -44,15 +48,29 @@ export function ItemDetailCard({item}: any) {
                 <p>{item.description}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-[24px]">
-                <p className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold bg-[#D4D4D4] py-2">
-                    <HeartIcon className="w-[20px]"/>
+            {/* user-info */}
+            {/* <div className="flex gap-2">
+                <Image
+                    alt="customer-image"
+                    src={item.userImage}
+                    width={30}
+                    height={30}
+                    className="rounded-full object-cover"
+                />
+
+                <p className="font-bold">{item.userName}</p>
+            </div> */}
+
+            {/* action-button */}
+            <div className="grid grid-cols-2 gap-4 mt-6">
+                <p className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold border border-[#D4D4D4] py-2">
+                    <HeartIcon className="w-5"/>
                     お気に入り
                 </p>
-                <p className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold bg-[#DDCADE] py-2">
-                    <ChatBubbleLeftIcon className="w-[20px]"/>
+                <Link href={`/chat/${item.id}`} className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold bg-[#DDCADE] py-2">
+                    <ChatBubbleLeftIcon className="w-5"/>
                     オーダーする
-                </p>
+                </Link>
             </div>
         </div>
     )

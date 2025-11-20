@@ -8,9 +8,12 @@ const config: Config = {
     ],
     theme: {
         extend: {
-        fontFamily: {
-            'zen-maru-gothic': ['Zen Maru Gothic', 'sans-serif'],
-        },
+            colors:{
+                border: "hsl(var(--border))"
+            },
+            fontFamily: {
+                'zen-maru-gothic': ['Zen Maru Gothic', 'sans-serif'],
+            },
         },
     },
     plugins: [],
