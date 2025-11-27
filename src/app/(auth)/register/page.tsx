@@ -12,7 +12,7 @@ export default function RegisterPage() {
     // use the imported sigIn function
     const googleRegister = () => {
         signIn('google', {
-            callbackUrl: '/'
+            callbackUrl: '/home'
         })
     }
     
