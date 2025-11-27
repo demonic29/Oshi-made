@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "client"
 }
 
 datasource db {
@@ -7,22 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(BUYER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  messages      Message[]
-  orders        Order[]
-  sessions      Session[]
-}
-
+// for google an
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -40,6 +26,25 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
+// user
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(BUYER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  messages      Message[]
+  orders        Order[]
+  sessions      Session[]
+}
+
+
 
 model Session {
   id           String   @id @default(cuid())

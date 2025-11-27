@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import BottomTabs from "@/components/ui/BottomTabs";
+import '@/app/globals.css'
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import GlobalError from "./global-error";
 import Providers from "./providers";
@@ -17,11 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="antialiased max-w-[390px] mx-auto">
+      <body className="antialiased max-w-[390px]">
         <ErrorBoundary errorComponent={GlobalError}>
           <Providers>
             {children}
-            <BottomTabs />
+            {/* <BottomTabs /> */}
           </Providers>
         </ErrorBoundary>
       </body>

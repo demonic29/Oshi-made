@@ -6,15 +6,15 @@ import { ChatBubbleLeftIcon } from "@heroicons/react/16/solid";
 
 export function ItemCard(item: any) {
     return (
-        <Link href={`/products/${item.id}`} className="py-6 bg-gray-100 px-2">
+        <Link href={`/products/${item.id}`} className="py-2">
             <Image
                 src={item.images[0]}
                 alt={item.title}
                 width={200}
                 height={200}
-                className="my-2"
+                className="my-2 bg-gray-100"
             />
-            <h2 className="font-semibold mb-2 [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
+            <h2 className="mb-2 [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
             <p className="text-sm text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
         </Link>
     )
