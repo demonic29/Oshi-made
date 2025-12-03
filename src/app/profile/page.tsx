@@ -42,7 +42,7 @@ export default function ProfileCard() {
     const user = session.user;
 
     return (
-        <div className=" overflow-hidden">
+        <div className="pb-[100px] overflow-hidden">
 
             <HeaderBar title='アカウント'/>
 
