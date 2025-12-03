@@ -36,7 +36,7 @@ export default function Home() {
                     ) : error ? (
                         <p className='text-center mt-8'>Error loading data</p>
                     ) : (
-                        <div className='grid grid-cols-2 mt-4 gap-2'>
+                        <div className='grid grid-cols-2 gap-4 mt-8'>
                             {
                                 items && items.map((item: any) => (
                                     <ItemCard

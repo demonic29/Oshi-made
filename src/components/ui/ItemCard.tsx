@@ -6,15 +6,17 @@ import { ChatBubbleLeftIcon } from "@heroicons/react/16/solid";
 
 export function ItemCard(item: any) {
     return (
-        <Link href={`/products/${item.id}`} className="py-2">
-            <Image
-                src={item.images[0]}
-                alt={item.title}
-                width={200}
-                height={200}
-                className="my-2 bg-gray-100"
-            />
-            <h2 className="mb-2 [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
+        <Link href={`/products/${item.id}`} className="py-2 w-full">
+            <div className="w-[170px] h-[200px] relative">
+                <Image
+                    src={item.images[0]}
+                    alt={item.title}
+                    fill
+                    objectFit="contain"
+                    className="my-2 bg-gray-100"
+                />
+            </div>
+            <h2 className="my-4 [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
             <p className="text-sm text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
         </Link>
     )
@@ -40,12 +42,12 @@ export function ItemDetailCard({item}: any) {
 
             {/* product-info */}
             <div className="flex items-center mt-4 gap-4">
-                <h2 className="font-semibold mb-2 text-[24px] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
+                <h2 className="font-semibold mb-2 text-[18px] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
                 <p className="text-[12px] text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
             </div>
             <div className="grid gap-4">
                 <p>{item.price} 円 ~ </p>
-                <p>{item.description}</p>
+                <p className="text-[13px] text-neutral-600">{item.description}</p>
             </div>
 
             {/* user-info */}

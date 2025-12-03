@@ -4,7 +4,7 @@ import Image from 'next/image'
 import sampleImg from '@/app/assets/imgs/1.png'
 // import { Button } from '@/components/ui/button'
 import Button from '@/components/Button'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 
 
 export default function RegisterPage() {
@@ -12,7 +12,7 @@ export default function RegisterPage() {
     // use the imported sigIn function
     const googleRegister = () => {
         signIn('google', {
-            callbackUrl: '/home'
+            callbackUrl: '/new-register/choose-role'
         })
     }
     
@@ -31,7 +31,7 @@ export default function RegisterPage() {
             <div className='grid gap-2'>
                 <Button
                     className='bg-main text-white'
-                    href='/home'
+                    href='/new-register'
                 >
                     メールアドレス
                 </Button>

@@ -18,9 +18,9 @@ export default function SignOutButton({ className }: SignOutButtonProps) {
     return (
         <Button 
             onClick={handleSignOut}
-            className={`bg-red-500 hover:bg-red-700 text-white ${className}`}
+            className={`bg-main w-full py-6 text-white ${className}`}
         >
-            Sign Out
+            サインアウト
         </Button>
     );
 }

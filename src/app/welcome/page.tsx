@@ -92,21 +92,19 @@ const Welcome = () => {
         </div>
 
         {/* footerBtn */}
-        <div className="text-center">
+        <div className="w-full px-4">
             {currentIndex === screens.length - 1 && (
-            <>
-                <Link
-                    href="/register"
-                    className="bg-main px-[110px] w-[90vw] rounded-lg text-white py-3 mb-2"
-                    >
-                    アカウント作成
-                </Link>
-                <br />
-                <br />
-                <Link href="/login" className="underline">
-                    ログイン
-                </Link>
-            </>
+                <div>
+                    <Link
+                        href="/register"
+                        className="bg-main w-full text-center block rounded-lg text-white py-3 mb-2"
+                        >
+                        会員登録
+                    </Link>
+                    <Link href="/home" className="underline text-center block">
+                        スキップ
+                    </Link>
+                </div>
             )}
         </div>
         </div>
