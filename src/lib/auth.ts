@@ -1,17 +1,30 @@
 // lib/auth.ts
 import { getServerSession, NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google' // ← Add this
+import GoogleProvider from 'next-auth/providers/google'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from './prisma'
 import bcrypt from 'bcryptjs'
 import { DefaultSession } from 'next-auth'
+import { Role } from '@prisma/client'
 
 declare module 'next-auth' {
     interface Session {
         user: {
-        id: string
+            id: string
+            role?: Role  // Add role to session type
         } & DefaultSession['user']
+    }
+    
+    interface User {
+        role?: Role  // Add role to user type
+    }
+}
+
+declare module 'next-auth/jwt' {
+    interface JWT {
+        id: string
+        role?: Role  // Add role to JWT type
     }
 }
 
@@ -53,6 +66,7 @@ export const authOptions: NextAuthOptions = {
                     id: user.id,
                     email: user.email,
                     name: user.name,
+                    role: user.role,  // Include role
                 }
             }
         })
@@ -63,19 +77,39 @@ export const authOptions: NextAuthOptions = {
     },
 
     pages: {
-        signIn: '/register', // Changed from /login
+        signIn: '/register',
     },
     
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
+            // Initial sign in
             if (user) {
                 token.id = user.id
+                token.role = user.role
             }
+            
+            // Handle session update (when role changes)
+            if (trigger === 'update' && session?.role) {
+                token.role = session.role
+            }
+            
+            // Fetch fresh role from database on each request (optional but recommended)
+            if (token.email) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { email: token.email },
+                    select: { role: true }
+                })
+                if (dbUser && dbUser.role) {
+                    token.role = dbUser.role
+                }
+            }
+            
             return token
         },
         async session({ session, token }) {
             if (session.user) {
-                session.user.id = token.id as string
+                session.user.id = token.id
+                session.user.role = token.role  // Add role to session
             }
             return session
         }

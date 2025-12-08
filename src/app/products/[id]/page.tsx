@@ -1,35 +1,43 @@
 import HeaderBar from '@/components/ui/HeaderBar';
-import { getCategory } from '@/lib/cateogry';
-
 import { ItemDetailCard } from '@/components/ui/ItemCard';
+import { prisma } from '@/lib/prisma';
+import { notFound } from 'next/navigation';
 
-export default async function ItemDetailPage({params}: {params: {id: string}}) {
-    
+export default async function ItemDetailPage({ params }: { params: { id: string } }) {
     const { id } = await params;
     
-    const datas = await getCategory();
-    const itemId = datas.find((data:any) => data.id === Number(id));
+    // Fetch product from database
+    const product = await prisma.product.findUnique({
+        where: {
+            id: id,
+        },
+    });
 
-    // const { data: session, status } = useSession();
-
-    // if (status === 'loading'){
-    //     return (
-    //         <div className="flex justify-center items-center h-40">
-    //             <p>Loading product profile...</p>
-    //         </div>
-    //     )
-    // }
+    // If product not found, show 404
+    if (!product) {
+        notFound();
+    }
 
     return (
         <div className='pb-20'>
-            <HeaderBar title={itemId.title}/>
+            <HeaderBar title={product.name} />
 
             <div>
-                {
-                    itemId && <ItemDetailCard item={itemId}/> 
-                }
+                <ItemDetailCard item={product} />
             </div>
-
         </div>
-    )
+    );
+}
+
+// Generate static params for all products (optional, for better performance)
+export async function generateStaticParams() {
+    const products = await prisma.product.findMany({
+        select: {
+            id: true,
+        },
+    });
+
+    return products.map((product) => ({
+        id: product.id,
+    }));
 }

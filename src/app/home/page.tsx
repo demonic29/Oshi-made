@@ -1,19 +1,55 @@
 'use client'
 
 import Link from 'next/link'
-import { useCategory } from '../hooks/useCategory';
+import { useEffect, useState } from 'react';
 import { ItemCard } from '@/components/ui/ItemCard';
 import BottomTabs from '@/components/ui/BottomTabs';
 import '@/app/globals.css'
 
+interface Product {
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    category: string;
+    taste: string;
+    stock: number;
+    createdAt: string;
+}
+
 export default function Home() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const links = [
         { href: '/home/pickup', label: 'おすすめ' },
         { href: '/home/category', label: 'ピックアップ' },
     ];
 
-    const { items, isLoading, error } = useCategory();
+    // Fetch products from API
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch('/api/products');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+                
+                const data = await response.json();
+                setProducts(data.products || []);
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                setError('Failed to load products');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     return (
         <>
@@ -34,22 +70,28 @@ export default function Home() {
                     isLoading ? (
                         <p className='text-center mt-8'>Loading...</p>
                     ) : error ? (
-                        <p className='text-center mt-8'>Error loading data</p>
+                        <p className='text-center mt-8 text-red-500'>{error}</p>
+                    ) : products.length === 0 ? (
+                        <p className='text-center mt-8 text-gray-500'>まだ商品がありません</p>
                     ) : (
-                        <div className='grid grid-cols-2 gap-4 mt-8'>
+                        <div className='grid grid-cols-2 gap-4 mt-8 pb-24'>
                             {
-                                items && items.map((item: any) => (
+                                products.map((product) => (
                                     <ItemCard
-                                        key={item.id}
-                                        {...item}
+                                        key={product.id}
+                                        id={product.id}
+                                        name={product.name}
+                                        description={product.description}
+                                        image={product.image}
+                                        category={product.category}
+                                        taste={product.taste}
+                                        stock={product.stock}
                                     />
                                 ))
                             }
                         </div>
-
                     )
                 }
-                
             </div>
 
             <BottomTabs/>

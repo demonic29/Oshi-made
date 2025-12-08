@@ -1,79 +1,111 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import Image from "next/image";
-import Link from "next/link";
-import { HeartIcon } from "@heroicons/react/16/solid";
-import { ChatBubbleLeftIcon } from "@heroicons/react/16/solid";
+// components/ui/ItemCard.tsx
+import Image from 'next/image';
+import Link from 'next/link';
 
-export function ItemCard(item: any) {
-    return (
-        <Link href={`/products/${item.id}`} className="py-2 w-full">
-            <div className="w-[170px] h-[200px] relative">
-                <Image
-                    src={item.images[0]}
-                    alt={item.title}
-                    fill
-                    objectFit="contain"
-                    className="my-2 bg-gray-100"
-                />
-            </div>
-            <h2 className="my-4 [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
-            <p className="text-sm text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
-        </Link>
-    )
+interface ItemCardProps {
+    id: string;
+    name: string;
+    description: string;
+    image: string;
+    category: string;
+    taste: string;
+    stock: number;
 }
 
-
-export function ItemDetailCard({item}: any) {
-
-    // if(!item || !item.images) return null;
-
+export function ItemCard({ id, name, description, image, category, taste, stock }: ItemCardProps) {
     return (
-        <div className="px-4">
+        <Link href={`/products/${id}`} className='block'>
+            <div className='border rounded-lg overflow-hidden hover:shadow-lg transition-shadow'>
+                <div className='relative w-full h-48'>
+                    <Image 
+                        src={image} 
+                        alt={name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                    />
+                </div>
+                <div className='p-3'>
+                    <h3 className='font-semibold text-sm line-clamp-1'>{name}</h3>
+                    <p className='text-xs text-gray-600 mt-1 line-clamp-2'>{description}</p>
+                    <div className='flex gap-2 mt-2'>
+                        <span className='text-xs bg-gray-100 px-2 py-1 rounded'>{taste}</span>
+                        {stock > 0 ? (
+                            <span className='text-xs bg-green-100 text-green-700 px-2 py-1 rounded'>在庫あり</span>
+                        ) : (
+                            <span className='text-xs bg-red-100 text-red-700 px-2 py-1 rounded'>売り切れ</span>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Link>
+    );
+}
 
-            {/* product-image */}
-            <div className="relative w-full h-[300px]">
-                <Image
-                    src={item.images?.[0] || 'no-image'}
-                    alt={item.title || 'no-items-found'}
+// Detail card for product detail page
+interface ItemDetailCardProps {
+    item: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        category: string;
+        taste: string;
+        stock: number;
+        createdAt: Date;
+        updatedAt: Date;
+    };
+}
+
+export function ItemDetailCard({ item }: ItemDetailCardProps) {
+    return (
+        <div className='px-4 mt-6'>
+            {/* Product Image */}
+            <div className='relative w-full h-96 rounded-lg overflow-hidden'>
+                <Image 
+                    src={item.image} 
+                    alt={item.name}
                     fill
-                    className="my-2"
+                    style={{ objectFit: 'cover' }}
+                    priority
                 />
             </div>
 
-            {/* product-info */}
-            <div className="flex items-center mt-4 gap-4">
-                <h2 className="font-semibold mb-2 text-[18px] [display:-webkit-box] [-webkit-box-orient:vertical] overflow-hidden [-webkit-line-clamp:1]">{item.title}</h2>
-                <p className="text-[12px] text-slate-900 inline px-2 py-1 rounded-lg bg-[#DDCADE]">{item.category}</p>
-            </div>
-            <div className="grid gap-4">
-                <p>{item.price} 円 ~ </p>
-                <p className="text-[13px] text-neutral-600">{item.description}</p>
-            </div>
+            {/* Product Info */}
+            <div className='mt-6'>
+                <h1 className='text-2xl font-bold'>{item.name}</h1>
+                
+                <div className='flex gap-2 mt-3'>
+                    <span className='text-sm bg-gray-100 px-3 py-1 rounded-full'>{item.taste}</span>
+                    <span className='text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full'>{item.category}</span>
+                    {item.stock > 0 ? (
+                        <span className='text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full'>在庫あり</span>
+                    ) : (
+                        <span className='text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full'>売り切れ</span>
+                    )}
+                </div>
 
-            {/* user-info */}
-            {/* <div className="flex gap-2">
-                <Image
-                    alt="customer-image"
-                    src={item.userImage}
-                    width={30}
-                    height={30}
-                    className="rounded-full object-cover"
-                />
+                <div className='mt-6'>
+                    <h2 className='font-semibold text-lg mb-2'>商品説明</h2>
+                    <p className='text-gray-700 leading-relaxed whitespace-pre-wrap'>{item.description}</p>
+                </div>
 
-                <p className="font-bold">{item.userName}</p>
-            </div> */}
+                <div className='mt-6 text-sm text-gray-500'>
+                    <p>登録日: {new Date(item.createdAt).toLocaleDateString('ja-JP')}</p>
+                </div>
 
-            {/* action-button */}
-            <div className="grid grid-cols-2 gap-4 mt-6">
-                <p className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold border border-[#D4D4D4] py-2">
-                    <HeartIcon className="w-5"/>
-                    お気に入り
-                </p>
-                <Link href={`/chat/${item.id}`} className="flex rounded-md gap-2 justify-center items-center text-[14px] font-semibold bg-[#DDCADE] py-2">
-                    <ChatBubbleLeftIcon className="w-5"/>
-                    オーダーする
-                </Link>
+                {/* Action Buttons */}
+                <div className='mt-8 flex gap-3'>
+                    <button 
+                        className='flex-1 bg-main text-white py-3 rounded-lg font-semibold hover:bg-main/90 transition-colors'
+                        disabled={item.stock === 0}
+                    >
+                        {item.stock > 0 ? 'カートに追加' : '売り切れ'}
+                    </button>
+                    <button className='px-6 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'>
+                        <i className="fa-regular fa-heart"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    )
+    );
 }
