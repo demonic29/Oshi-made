@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 import { ItemCard } from '@/components/ui/ItemCard';
 import BottomTabs from '@/components/ui/BottomTabs';
 import '@/app/globals.css'
+import Image from 'next/image';
+import logo from '../assets/imgs/category/logo.png'
+import { ProductSkeleton } from '@/components/Skeleton';
 
 interface Product {
     id: string;
@@ -53,8 +56,16 @@ export default function Home() {
 
     return (
         <>
-            <div className='mt-4 px-4'>
-                <h1 className='font-bold text-center text-2xl'>推しめいど</h1>
+            <div className='mt-8 px-4'>
+                <h1 className='relative flex justify-center'>
+                    <Image
+                        alt='oshimade-logo'
+                        src={logo || 'logo-image'}
+                        width={100}
+                        height={100}
+                        objectFit='contain'
+                    />
+                </h1>
 
                 <div className='flex gap-16 mt-4 justify-center'>
                     {
@@ -66,9 +77,9 @@ export default function Home() {
                     }
                 </div>
                 
-                {
+                {   
                     isLoading ? (
-                        <p className='text-center mt-8'>Loading...</p>
+                        <p className='text-center mt-8 text-main font-bold'>しばらくお待ち下さい。。</p>                        
                     ) : error ? (
                         <p className='text-center mt-8 text-red-500'>{error}</p>
                     ) : products.length === 0 ? (

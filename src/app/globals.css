@@ -4,11 +4,12 @@
 @import "tw-animate-css";
 
 @theme{
-    --color-main: #E37298;
-    --color-bg: #fffdefa;
-    --color-accent: #D9E6F6;
-    --color-text: #50443A;
+  --color-main: #E37298;
+  --color-bg: #fffdefa;
+  --color-accent: #D9E6F6;
+  --color-text: #50443A;
 }
+
 
 
 body {

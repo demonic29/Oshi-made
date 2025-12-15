@@ -35,7 +35,7 @@ export default async function Page({ params }: { params: Promise<{ item: string 
                         height={70}
                         key={link.href}
                         href={link.href}
-                        src={link.src.src}
+                        src={link.src}
                         name={link.name}
                         items={[]}
                     />

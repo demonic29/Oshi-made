@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
                 image: imageUrl,
                 category,
                 taste,
-                stock: 1, // Default stock
+                stock: 1,
             },
         });
 

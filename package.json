@@ -35,6 +35,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.23.25",
+    "iconsax-reactjs": "^0.0.8",
     "lucide-react": "^0.546.0",
     "next": "^16.0.7",
     "next-auth": "^4.24.13",
@@ -43,6 +44,7 @@
     "react-dom": "^19.2.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
+    "sonner": "^2.0.7",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
     "vercel": "^48.11.0"

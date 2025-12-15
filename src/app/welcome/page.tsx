@@ -5,7 +5,7 @@ import React, { useState, useRef } from "react";
 // import { Camera } from 'react-camera-pro'
 
 // Images
-import img1 from "@/app/assets/imgs/1.png"
+import img1 from "@/app/assets/imgs/welcome_01.png"
 import img2 from "@/app/assets/imgs/2.png"
 import img3 from "@/app/assets/imgs/3.png"
 import Link from "next/link";
@@ -14,7 +14,7 @@ const Welcome = () => {
     const [screens] = useState([
         { 
             text: "あけぼのやわらかな光が、まどろむ教室をそっとつつむ。いつもの席に、ひとりのわたし。視界は、窓の外の空にとどまる。",
-            img: img1, 
+            img: img3, 
             id: 1 
         },
         { 
@@ -23,8 +23,8 @@ const Welcome = () => {
             id: 2 
         },
         { 
-            text: "ささやかなぬいぐるみを、間に置いて。それは、言葉にならない約束のようなもの。", 
-            img: img3, 
+            text: "", 
+            img: img1, 
             id: 3 
         },
     ]);
@@ -43,72 +43,68 @@ const Welcome = () => {
     };
 
     return (
-        <div className="flex flex-col pt-6 items-center opacity-0 animate-fadeIn">
+        <div className="flex bg-[#FFFDFA] flex-col min-h-screen pt-6 items-center overflow-hidden opacity-0 animate-fadeIn">
 
+            {/* Slider area */}
             <div
-                ref={scrollRef}
-                onScroll={handleScroll}
-                className="flex no-scrollbar overflow-x-scroll space-x-5 px-5 max-w-full scroll-smooth snap-x snap-mandatory"
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex-1 flex no-scrollbar bg-[#FFFDFA] overflow-x-scroll space-x-5 px-5 max-w-full scroll-smooth snap-x snap-mandatory"
             >
-                {screens.map((screen) => (
+            {screens.map((screen) => (
                 <div
-                    key={screen.id}
-                    className="shrink-0 w-[90vw] snap-center"
+                key={screen.id}
+                className="shrink-0 w-[90vw] snap-center"
                 >
-                    <div className="relative h-[400px]">
-                        <Image
-                            src={screen.img}
-                            alt="home-screen-img"
-                            fill
-                            className="rounded-lg object-cover"
-                        />
-                    </div>
-                    <p className="text-center text-[14px] text-text font-semibold my-4 min-h-[60px]">{screen.text}</p>
+                <div className="relative w-full h-[70vh]">
+                    <Image
+                    src={screen.img}
+                    alt="home-screen-img"
+                    fill
+                    className="rounded-lg object-contain"
+                    />
                 </div>
-                ))}
+                <p className="text-center text-[14px] text-text font-semibold my-4 min-h-[60px]">
+                    {screen.text}
+                </p>
+                </div>
+            ))}
             </div>
 
-        {/* Dot pagination */}
-        <div className="flex space-x-2 mt-5">
-            {/* {screens.map((screen, index)) )} */}
-            {
-                screens.map((screen, index) => {
-                    return (
-                        <div key={index}>
-                            {
-                                currentIndex === screens.length - 1 ? <div className="hidden"></div> : (
-                                    <div
-                                        key={screen.id}
-                                        className={`w-3 h-3 rounded-full ${
-                                        index === currentIndex ? "bg-main" : "bg-gray-300"
-                                    }`}
-                                />
-                                )
-                            }
-                        </div>
-                    )
-                })
-            }
-        </div>
+            {/* Dot pagination */}
+            <div className="flex space-x-2 my-4">
+            {screens.map((_, index) => (
+                currentIndex !== screens.length - 1 && (
+                <div
+                    key={index}
+                    className={`w-3 h-3 rounded-full ${
+                    index === currentIndex ? "bg-main" : "bg-gray-300"
+                    }`}
+                />
+                )
+            ))}
+            </div>
 
-        {/* footerBtn */}
-        <div className="w-full px-4">
+            {/* Footer */}
+            <div className="w-full px-4 pb-6">
             {currentIndex === screens.length - 1 && (
-                <div>
-                    <Link
-                        href="/register"
-                        className="bg-main w-full text-center block rounded-lg text-white py-3 mb-2"
-                        >
-                        会員登録
-                    </Link>
-                    <Link href="/home" className="underline text-center block">
-                        スキップ
-                    </Link>
-                </div>
+                <>
+                <Link
+                    href="/register"
+                    className="bg-main w-full text-center block rounded-lg text-white py-3 mb-2"
+                >
+                    会員登録
+                </Link>
+                <Link href="/home" className="underline text-center block">
+                    スキップ
+                </Link>
+                </>
             )}
-        </div>
+            </div>
+
         </div>
     );
+
 };
 
 export default Welcome;

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 
 export function TasteUi({ title, imgSrc, href }: { title: string; imgSrc: string; href: string}) {
     return (
@@ -28,7 +28,7 @@ export function TasteUi({ title, imgSrc, href }: { title: string; imgSrc: string
 export function CategoryUi (
     {href, src, name, items, width, height}: { 
         href: string; 
-        src: string; 
+        src: StaticImageData; 
         name: string; 
         items: string[] ; 
         width?: number; 
@@ -36,7 +36,7 @@ export function CategoryUi (
     }) 
     {
     return (
-        <Link href={href} className='flex gap-4 border-b-gray-300 border-b pb-4'>
+        <Link href={href} className='flex gap-4 border-b-gray-300 border-b py-4'>
             <Image
                 src={src || 'no-image'}
                 alt={name}

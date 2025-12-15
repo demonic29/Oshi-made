@@ -24,7 +24,7 @@ export default function CategoryPage() {
                             height={100}
                             key={link.href}
                             href={link.href} 
-                            src={link.src.src} 
+                            src={link.src} 
                             name={link.name} 
                             items={link.items}
                         />

@@ -53,29 +53,33 @@ export default async function RoleSelectionPage() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">ロールを選択</h1>
+        <div className="p-4 flex flex-col justify-center items-center h-screen">
             
-            <p className="text-sm text-gray-500 mb-4">
-                Welcome, {user.email}
-            </p>
+            <div>
+                <h1 className="text-2xl font-bold mb-6">新規アカウント登録</h1>
             
-            <div className="space-y-4">
-                <form action={selectBuyer}>
-                    <button 
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600"
-                    >
-                        購入者として登録
-                    </button>
-                </form>
-                
+                <p className="text-sm text-gray-500 mb-4">
+                    {/* Welcome, {user.email} */}
+                    利用方法
+                </p>
+            </div>
+            
+            <div className="space-y-4 flex gap-4">
                 <form action={selectSeller}>
                     <button 
                         type="submit"
-                        className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600"
+                        className="w-full underline text-main  py-3 rounded-lg "
                     >
-                        出品者として登録
+                        作家
+                    </button>
+                </form>
+                
+                <form action={selectBuyer}>
+                    <button 
+                        type="submit"
+                        className="w-full underline  text-main py-3 rounded-lg"
+                    >
+                        購入者
                     </button>
                 </form>
             </div>

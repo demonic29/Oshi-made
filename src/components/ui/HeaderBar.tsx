@@ -7,7 +7,7 @@ export default function HeaderBar({ title} : { title: string }) {
 
     return (
         <div className="w-full border-b-1 border-gray-400 mb-4">
-            <div className="my-4 grid grid-cols-3 items-center px-4">
+            <div className="my-4 grid grid-cols-3 items-center">
                 <button onClick={() => router.back()}>
                     <svg
                     xmlns="http://www.w3.org/2000/svg"

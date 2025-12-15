@@ -17,7 +17,7 @@ export default function RegisterPage() {
     }
     
     return (
-        <div className='px-4 grid gap-10 justify-center items-center pt-6'>
+        <div className='px-4 flex flex-col gap-10 justify-center items-center pt-6'>
             <div className='relative max-w-md w-full h-[400px]'>
                 <Image
                     alt='this is image'
@@ -28,9 +28,9 @@ export default function RegisterPage() {
                 />
             </div>
 
-            <div className='grid gap-2'>
+            <div className=' flex flex-col w-full gap-2'>
                 <Button
-                    className='bg-main text-white'
+                    className='bg-main text-center text-white'
                     href='/new-register'
                 >
                     メールアドレス
@@ -39,7 +39,7 @@ export default function RegisterPage() {
                     onClick={googleRegister}
                     className='border border-text text-main'
                 >
-                    Google
+                    グーグル
                 </Button>
             </div>
 
