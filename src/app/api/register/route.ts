@@ -9,14 +9,14 @@ export async function POST(request: Request) {
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({
-        where: { email }
+            where: { email }
         });
 
         if (existingUser) {
-        return NextResponse.json(
-            { error: "このメールアドレスは既に登録されています" },
-            { status: 400 }
-        );
+            return NextResponse.json(
+                { error: "このメールアドレスは既に登録されています" },
+                { status: 400 }
+            );
         }
 
         // Hash the password
@@ -24,12 +24,12 @@ export async function POST(request: Request) {
 
         // Create the user
         const user = await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: hashedPassword,
-            // role is optional, will be set later
-        }
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                // role is optional, will be set later
+            }
         });
 
         return NextResponse.json({ 

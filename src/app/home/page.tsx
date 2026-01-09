@@ -13,7 +13,7 @@ interface Product {
     id: string;
     name: string;
     description: string;
-    image: string;
+    images: string[];
     category: string;
     taste: string;
     stock: number;
@@ -93,7 +93,7 @@ export default function Home() {
                                         id={product.id}
                                         name={product.name}
                                         description={product.description}
-                                        image={product.image}
+                                        images={product.images}
                                         category={product.category}
                                         taste={product.taste}
                                         stock={product.stock}

@@ -1,5 +1,6 @@
 'use client'
 
+import BottomTabs from '@/components/ui/BottomTabs'
 import ChatWindow from '@/components/ui/ChatWindow'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -22,10 +23,11 @@ export default function ChatPage() {
 
   return (
     <SessionProvider>
-      <div className="container mx-auto p-4 h-screen">
+      <div className="container mx-auto px-4 h-screen">
         <div className="h-full max-w-4xl mx-auto">
           <ChatWindow />
         </div>
+        <BottomTabs/>
       </div>
     </SessionProvider>
   )

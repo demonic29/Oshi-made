@@ -10,22 +10,20 @@ import { CategoryUi } from '@/components/ui/TypeUi';
 import HeaderBar from '@/components/ui/HeaderBar';
 import { category1, category2, category3, category4, category5, category6, category7 } from '@/lib/image';
 import { taste1, taste2, taste3, taste4, taste5, taste6 } from '@/lib/image';
-import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 
 export default function ProfileHeader() {
-    const router = useRouter();
 
     const { data: session, status } = useSession();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [modalPlacement, setModalPlacement] = useState<"bottom" | "center" | "auto" | "top" | "top-center" | "bottom-center">("bottom-center");
     
     // Multi-step state
-    const [step, setStep] = useState(1); // 1: Basic info, 2: Category, 3: Taste
+    const [step, setStep] = useState(1);
     
-    // Form data
-    const [productImage, setProductImage] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string>('');
+    // Form data - CHANGED: Multiple images
+    const [productImages, setProductImages] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
     const [productName, setProductName] = useState<string>('');
     const [productDescription, setProductDescription] = useState<string>('');
     const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -50,24 +48,42 @@ export default function ProfileHeader() {
         { name: "ロリータ系", value: "lolita", src: taste6 },
     ];
 
-    // Handle image upload
+    // CHANGED: Handle multiple image uploads
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setProductImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+        const files = e.target.files;
+        if (files) {
+            const fileArray = Array.from(files);
+            
+            // Limit to 5 images
+            if (productImages.length + fileArray.length > 5) {
+                alert('最大5枚まで画像をアップロードできます');
+                return;
+            }
+
+            setProductImages(prev => [...prev, ...fileArray]);
+
+            // Create previews for new images
+            fileArray.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreviews(prev => [...prev, reader.result as string]);
+                };
+                reader.readAsDataURL(file);
+            });
         }
+    };
+
+    // ADDED: Remove image function
+    const handleRemoveImage = (index: number) => {
+        setProductImages(prev => prev.filter((_, i) => i !== index));
+        setImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     // Reset form when modal closes
     const handleModalClose = () => {
         setStep(1);
-        setProductImage(null);
-        setImagePreview('');
+        setProductImages([]);
+        setImagePreviews([]);
         setProductName('');
         setProductDescription('');
         setSelectedCategory('');
@@ -78,7 +94,7 @@ export default function ProfileHeader() {
     // Go to next step
     const handleNext = () => {
         if (step === 1) {
-            if (!productName || !productDescription || !productImage) {
+            if (!productName || !productDescription || productImages.length === 0) {
                 alert('商品名、説明、画像を入力してください');
                 return;
             }
@@ -89,9 +105,9 @@ export default function ProfileHeader() {
                 return;
             }
             setStep(3);
-        }else if (step === 3) {
-            if (!selectedCategory) {
-                alert('カテゴリを選択してください');
+        } else if (step === 3) {
+            if (!selectedTaste) {
+                alert('テイストを選択してください');
                 return;
             }
             setStep(4);
@@ -115,7 +131,12 @@ export default function ProfileHeader() {
         try {
             // Create FormData for file upload
             const formData = new FormData();
-            if (productImage) formData.append('image', productImage);
+            
+            // CHANGED: Append multiple images
+            productImages.forEach((image, index) => {
+                formData.append('images', image);
+            });
+            
             formData.append('name', productName);
             formData.append('description', productDescription);
             formData.append('category', selectedCategory);
@@ -130,7 +151,6 @@ export default function ProfileHeader() {
             if (response.ok) {
                 alert('商品が登録されました！');
                 handleModalClose();
-                // Optionally refresh the page or update product list
                 window.location.reload();
             } else {
                 alert('エラーが発生しました');
@@ -146,7 +166,6 @@ export default function ProfileHeader() {
             <p>Loading user profile...</p>
         </div>;
     }
-
 
     if (!session) {
         return (
@@ -183,7 +202,6 @@ export default function ProfileHeader() {
                     <i className="fa-solid fa-user-pen"></i> アカウント設定
                 </Button>
 
-                {/* Show button only if user role is 'SELLER' */}
                 {session.user.role === 'SELLER' && (
                     <Button className='border text-center text-[14px]' onClick={onOpen}>
                         <i className="fa-solid fa-plus"></i> 商品登録
@@ -204,31 +222,49 @@ export default function ProfileHeader() {
                                 {/* Step 1: Basic Information */}
                                 {step === 1 && (
                                     <div className='grid gap-4'>
-                                        <div className="bg-[#F8F8F8] h-[200px] w-full mx-auto flex flex-col justify-center items-center rounded-lg text-center">
-                                            {imagePreview ? (
-                                                <div className="relative w-full h-full">
-                                                    <Image 
-                                                        src={imagePreview} 
-                                                        alt="Preview" 
-                                                        fill
-                                                        style={{ objectFit: "cover" }}
-                                                        className="rounded-lg"
-                                                    />
-                                                    <label htmlFor="productImage" className="absolute inset-0 cursor-pointer bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                        <i className="fa-solid fa-edit text-white text-2xl"></i>
+                                        {/* CHANGED: Multiple image upload UI */}
+                                        <div className="grid gap-2">
+                                            <label className='text-sm font-semibold'>
+                                                商品画像 ({imagePreviews.length}/5)
+                                            </label>
+                                            
+                                            <div className="grid grid-cols-3 gap-2">
+                                                {imagePreviews.map((preview, index) => (
+                                                    <div key={index} className="relative aspect-square">
+                                                        <Image 
+                                                            src={preview} 
+                                                            alt={`Preview ${index + 1}`} 
+                                                            fill
+                                                            style={{ objectFit: "cover" }}
+                                                            className="rounded-lg"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveImage(index)}
+                                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                                                        >
+                                                            <i className="fa-solid fa-times text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                                
+                                                {imagePreviews.length < 5 && (
+                                                    <label 
+                                                        htmlFor="productImages" 
+                                                        className="aspect-square bg-[#F8F8F8] rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                                    >
+                                                        <i className="fa-solid fa-plus text-xl mb-1"></i>
+                                                        <span className="text-xs text-gray-600">追加</span>
                                                     </label>
-                                                </div>
-                                            ) : (
-                                                <label htmlFor="productImage" className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                                                    <i className="fa-solid fa-plus text-2xl mb-2"></i>
-                                                    <span className="text-sm text-gray-600">画像を選択</span>
-                                                </label>
-                                            )}
+                                                )}
+                                            </div>
+                                            
                                             <input
                                                 type="file"
-                                                id="productImage"
-                                                name="productImage"
+                                                id="productImages"
+                                                name="productImages"
                                                 accept="image/*"
+                                                multiple
                                                 onChange={handleImageChange}
                                                 className="hidden"
                                             />
@@ -270,11 +306,10 @@ export default function ProfileHeader() {
                                         <h3 className="text-lg font-semibold mb-2">カテゴリを選択</h3>
                                         <div className="grid">
                                             {categoryTypeLinks.map((category) => (                                    
-
                                                 <div 
                                                     key={category.href} 
                                                     onClick={() => setSelectedCategory(category.href)}
-                                                    className={`text-center transition-all ${
+                                                    className={`text-center transition-all cursor-pointer ${
                                                         selectedCategory === category.href 
                                                             ? 'border-main bg-main/10' 
                                                             : 'border-gray-300 hover:border-main/50'
@@ -303,7 +338,7 @@ export default function ProfileHeader() {
                                                 <div 
                                                     key={taste.value} 
                                                     onClick={() => setSelectedTaste(taste.value)}
-                                                    className={`text-center transition-all ${
+                                                    className={`text-center transition-all cursor-pointer ${
                                                         selectedTaste === taste.value 
                                                             ? 'border-main bg-main/10' 
                                                             : 'border-gray-300 hover:border-main/50'
@@ -320,31 +355,31 @@ export default function ProfileHeader() {
                                                 </div>
                                             ))}
                                         </div>
-
-                                        
                                     </div>
                                 )}
 
+                                {/* Step 4: Confirmation */}
                                 {step === 4 && (
                                     <div className='grid gap-4'>                            
-                                        <div className=" grid gap-4">
-                                            <div className=''>
-                                                <h3 className='text-[12px] text-pink-800'>商品画像</h3>
-                                                {imagePreview && (
-                                                    <div className="relative w-full mt-2 h-[300px]">
-                                                        <Image 
-                                                            src={imagePreview} 
-                                                            alt="Preview" 
-                                                            fill
-                                                            style={{ objectFit: "cover" }}
-                                                            className="rounded-lg"
-                                                        />
-                                                        <label htmlFor="productImage" className="absolute inset-0 cursor-pointer bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                            <i className="fa-solid fa-edit text-white text-2xl"></i>
-                                                        </label>
-                                                    </div>
-                                                )}
+                                        <div className="grid gap-4">
+                                            {/* CHANGED: Show all images in confirmation */}
+                                            <div>
+                                                <h3 className='text-[12px] text-pink-800 mb-2'>商品画像</h3>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {imagePreviews.map((preview, index) => (
+                                                        <div key={index} className="relative aspect-square">
+                                                            <Image 
+                                                                src={preview} 
+                                                                alt={`Preview ${index + 1}`} 
+                                                                fill
+                                                                style={{ objectFit: "cover" }}
+                                                                className="rounded-lg"
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
+
                                             <div className='border-b pb-2 border-gray-300'>
                                                 <h3 className='text-[12px] text-pink-800'>商品名</h3>
                                                 <p>{productName}</p>
@@ -358,39 +393,22 @@ export default function ProfileHeader() {
                                                 <p>{categoryTypeLinks.find(c => c.href === selectedCategory)?.name}</p>
                                             </div>
                                             <div className='border-b pb-2 border-gray-300'>
-                                                <h3 className='text-[12px] text-pink-800'>テスト</h3>                                                
-                                                <p> {tasteOptions.find(t => t.value === selectedTaste)?.name}</p>
+                                                <h3 className='text-[12px] text-pink-800'>テイスト</h3>                                                
+                                                <p>{tasteOptions.find(t => t.value === selectedTaste)?.name}</p>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                 )}
-
-                                
                             </ModalBody>
 
                             <ModalFooter className="flex px-4 pb-3 justify-between">
-                                {/* <div className='flex flex-1'>
-                                    
-                                </div> */}
                                 <div className="flex flex-1 w-full gap-4 justify-between">
                                     {step > 1 && (
                                         <Button className='border' onClick={handleBack}>
                                             戻る
                                         </Button>
                                     )}
-                                    {/* {
-                                        step > 1 ? (
-                                            <Button className='hidden' onClick={onClose}>
-                                                キャンセル
-                                            </Button>
-                                        ) : (
-                                            <Button className='border border-text' onClick={onClose}>
-                                                キャンセル
-                                            </Button>
-                                        ) 
 
-                                    } */}
                                     {step === 1 && (
                                         <>
                                             <Button className='border border-text text-text' onClick={onClose}>
@@ -400,39 +418,25 @@ export default function ProfileHeader() {
                                                 次へ
                                             </Button>
                                         </>
-                                    )
-                                    }
-                                    {step === 2 && (
-                                        <>
-                                            <Button className='bg-main text-white' onClick={handleNext}>
-                                                次へ
-                                            </Button>
-                                            {/* <Button className='bg-main text-white' onClick={handleNext}>
-                                                確認
-                                            </Button> */}
-                                        </>
-                                    )
-                                    }
-                                    {step === 3 && (
-                                        <>
-                                            <Button className='bg-main text-white' onClick={handleNext}>
-                                                確認
-                                            </Button>
-                                            {/* <Button className='bg-main text-white' onClick={handleNext}>
-                                                確認
-                                            </Button> */}
-                                        </>
-                                    )
-                                    }
+                                    )}
 
-                                    { step === 4 &&
-                                        (
-                                            <Button className='bg-main text-white' onClick={handleSubmit}>
-                                                登録
-                                            </Button>
-                                        ) 
-                                    }
-                                    
+                                    {step === 2 && (
+                                        <Button className='bg-main text-white' onClick={handleNext}>
+                                            次へ
+                                        </Button>
+                                    )}
+
+                                    {step === 3 && (
+                                        <Button className='bg-main text-white' onClick={handleNext}>
+                                            確認
+                                        </Button>
+                                    )}
+
+                                    {step === 4 && (
+                                        <Button className='bg-main text-white' onClick={handleSubmit}>
+                                            登録
+                                        </Button>
+                                    )}
                                 </div>
                             </ModalFooter>
                         </>

@@ -9,10 +9,8 @@ import { useEffect, useState } from 'react';
 import { Product } from '@prisma/client';
 import BottomTabs from '@/components/ui/BottomTabs';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
 export default function ProfileCard() {
-    const router = useRouter();
     const { data: session, status } = useSession();
     const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
     const [userProducts, setUserProducts] = useState<Product[]>([]);
@@ -22,6 +20,8 @@ export default function ProfileCard() {
 
     // Get user role from session
     const userRole = session?.user?.role;
+    const currentUser = session?.user?.id;
+    console.log(currentUser);
 
     // Fetch favorite products
     useEffect(() => {
@@ -75,7 +75,7 @@ export default function ProfileCard() {
                 }
 
                 const data = await response.json();
-                console.log('Fetched user products:', data.products); // Debug log
+                // console.log('Fetched user products:', data.products); // Debug log
                 setUserProducts(data.products || []);
             } catch (err) {
                 console.error('Error fetching user products:', err);
@@ -124,15 +124,15 @@ export default function ProfileCard() {
                     ) : (
                         <div className='flex gap-3 overflow-x-auto pb-2 no-scrollbar'>
                             {favoriteProducts.map((product) => (
-                                <div key={product.id} className='shrink-0 w-[160px]'>
+                                <div key={product.id} className='shrink-0 w-40'>
                                     <ItemCard                                           
                                         id={product.id}
                                         name={product.name}
                                         description={product.description}
-                                        image={product.image}
+                                        images={product.images}
                                         category={product.category}
                                         taste={product.taste}
-                                        stock={product.stock}
+                                        stock={product.stock}                                        
                                     />
                                 </div>
                             ))}
@@ -141,7 +141,7 @@ export default function ProfileCard() {
                 </section>
 
                 {/* User's Uploaded Products Section - Only for Sellers */}
-                {userRole === 'SELLER' && (
+                {currentUser && (
                     <section className='mt-8'>
                         <div className='flex items-center justify-between mb-3'>
                             <h2 className='font-semibold text-main text-base flex items-center gap-2'>
@@ -172,7 +172,7 @@ export default function ProfileCard() {
                                         id={product.id}
                                         name={product.name}
                                         description={product.description}
-                                        image={product.image}
+                                        images={product.images}
                                         category={product.category}
                                         taste={product.taste}
                                         stock={product.stock}

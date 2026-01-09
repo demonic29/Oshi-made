@@ -7,20 +7,17 @@ import HeaderBar from './HeaderBar';
 
 export default function ChatPage() {
 
-    const {users, isLoading, error} = useUsers();
+    const { users, isLoading, error } = useUsers();
 
     return (
         <div>
-            <div className="">
-                <HeaderBar title='チャット'/>
-            </div>
-
+            <HeaderBar title='チャット' />
             <div className="">
                 {
                     isLoading ? (
                         <p>Loading...</p>
                     ) : error ? (
-                        <p>error...</p> 
+                        <p>error...</p>
                     ) : (
                         <div className='grid gap-2'>
                             {
@@ -31,12 +28,12 @@ export default function ChatPage() {
                                             src={user.image || 'This is user image'}
                                             width={50}
                                             height={50}
-                                            className='rounded-full' 
+                                            className='rounded-full'
                                         />
 
                                         <div>
-                                            <h3 className='list-title'>{ user.firstName }</h3>
-                                            <p className='list-desc'>{ user.university }</p>
+                                            <h3 className='list-title'>{user.firstName}</h3>
+                                            <p className='list-desc'>{user.university}</p>
                                         </div>
                                     </Link>
                                 ))

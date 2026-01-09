@@ -21,6 +21,7 @@ export default function NewUserRegister() {
         const password = formData.get("password") as string;
 
         try {
+
         // Create user account
         const registerResponse = await fetch("/api/register", {
             method: "POST",
@@ -53,9 +54,9 @@ export default function NewUserRegister() {
             router.push("/new-register/choose-role");
         }
         } catch (error) {
-        console.error(error);
-        setError("エラーが発生しました");
-        setLoading(false);
+            console.error(error);
+            setError("エラーが発生しました");
+            setLoading(false);
         }
     }
 
@@ -71,51 +72,51 @@ export default function NewUserRegister() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-            <label className="block text-sm font-medium mb-1">
-                ユーザー名
-            </label>
-            <input
-                type="text"
-                name="name"
-                required
-                className="w-full px-3 py-2 border-b"
-                disabled={loading}
-            />
+                <label className="block text-sm font-medium mb-1">
+                    ユーザー名
+                </label>
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    className="w-full px-3 py-2 border-b"
+                    disabled={loading}
+                />
             </div>
 
             <div>
-            <label className="block text-sm font-medium mb-1">
-                メールアドレス
-            </label>
-            <input
-                type="email"
-                name="email"
-                required
-                className="w-full px-3 py-2 border-b"
-                disabled={loading}
-            />
+                <label className="block text-sm font-medium mb-1">
+                    メールアドレス
+                </label>
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-3 py-2 border-b"
+                    disabled={loading}
+                />
             </div>
 
             <div>
-            <label className="block text-sm font-medium mb-1">
-                パスワード
-            </label>
-            <input
-                type="password"
-                name="password"
-                required
-                minLength={6}
-                className="w-full px-3 py-2 border-b"
-                disabled={loading}
-            />
+                <label className="block text-sm font-medium mb-1">
+                    パスワード
+                </label>
+                <input
+                    type="password"
+                    name="password"
+                    required
+                    minLength={6}
+                    className="w-full px-3 py-2 border-b"
+                    disabled={loading}
+                />
             </div>
 
             <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-main text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
-            >
-            {loading ? "処理中..." : "次へ"}
+                type="submit"
+                disabled={loading}
+                className="w-full bg-main text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+                >
+                {loading ? "処理中..." : "次へ"}
             </button>
         </form>
         </div>

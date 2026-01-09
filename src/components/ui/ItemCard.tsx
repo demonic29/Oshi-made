@@ -4,7 +4,7 @@
 import Link from 'next/link';
 
 import { Heart } from 'iconsax-reactjs';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { useState, useTransition } from 'react';
 import { toggleFavorite } from '@/app/actions/favorite';
 import { toast } from 'sonner'; // or your preferred toast library
@@ -14,18 +14,19 @@ interface ItemCardProps {
     id: string;
     name: string;
     description: string;
-    image: string;
+    images: string[];
     category: string;
     taste: string;
     stock: number;
 }
 
-export function ItemCard({ id, name, description, image, category, taste, stock }: ItemCardProps) {
+export function ItemCard({ id, name, description, images, category, taste, stock }: ItemCardProps) {
     return (
         <Link href={`/products/${id}`} className='block w-full'>
             <div className='relative w-full h-48 overflow-hidden rounded-lg'>
-                <Image 
-                    src={image} 
+                <Image
+                    src={images[0] ?? 'nope'}
+                    loading='eager'
                     alt={name}
                     fill
                     style={{ objectFit: 'cover' }}
@@ -50,12 +51,12 @@ export function ItemCard({ id, name, description, image, category, taste, stock 
 
 // components/ItemCard.tsx
 
-interface ItemDetailCardProps{
+interface ItemDetailCardProps {
     item: {
         id: string;
         name: string;
         description: string;
-        image: string;
+        images: string[];
         category: string;
         taste: string;
         stock: number;
@@ -66,15 +67,40 @@ interface ItemDetailCardProps{
     isAuthenticated: boolean;
 }
 
-export function ItemDetailCard({ 
-  item, 
-  initialIsFavorited, 
-  isAuthenticated 
+export function ItemDetailCard({
+    item,
+    initialIsFavorited,
+    isAuthenticated
 }: ItemDetailCardProps) {
 
     const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
+    const [activeImage, setActiveImage] = useState(
+        item.images[0] ?? '/no-images.png'
+    )
+
+    const handleOrder = async () => {
+        if (!isAuthenticated) {
+            router.push('/api/auth/signin');
+            return;
+        }
+
+        const res = await fetch('/api/rooms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                productId: item.id,
+            }),
+        });
+
+        const data = await res.json();
+
+        if (data.roomId) {
+            router.push(`/chat/${data.roomId}`);
+        }
+    };
+
 
     const handleFavoriteClick = () => {
         if (!isAuthenticated) {
@@ -84,12 +110,12 @@ export function ItemDetailCard({
 
         startTransition(async () => {
             const result = await toggleFavorite(item.id);
-            
+
             if (result.success) {
                 setIsFavorited(result.isFavorited!);
                 console.log(
-                    result.isFavorited 
-                        ? 'お気に入りに追加しました' 
+                    result.isFavorited
+                        ? 'お気に入りに追加しました'
                         : 'お気に入りから削除しました'
                 );
             } else {
@@ -99,20 +125,45 @@ export function ItemDetailCard({
     };
 
     return (
-        <div className='mt-6'>
-            <div className='relative w-full h-96'>
-                <Image 
-                    src={item.image} 
+        <div className='mt-6 overflow-scroll'>
+            {/* Main image */}
+            <div className="relative w-full h-96">
+                <Image
+                    src={activeImage}
+                    loading='eager'
                     alt={item.name}
                     fill
-                    style={{ objectFit: 'cover' }}
+                    className="object-cover"
                     priority
                 />
             </div>
 
-            <div className='mt-6 px-2'>
+            {/* Thumbnails */}
+            {item.images.length > 1 && (
+                <div className="mt-3 flex ps-2 gap-2 overflow-x-auto">
+                    {item.images.map((img, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setActiveImage(img)}
+                            className={`relative w-20 h-20 rounded-md border ${activeImage === img
+                                ? 'border-main'
+                                : 'border-gray-200'
+                                }`}
+                        >
+                            <Image
+                                src={img}
+                                alt={`${item.name} ${index + 1}`}
+                                fill
+                                className="object-cover rounded-md"
+                            />
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            <div className='mt-6 px-2 overflow-hidden'>
                 <h1 className='text-2xl font-bold'>{item.name}</h1>
-                
+
                 <div className='flex gap-2 mt-3'>
                     <span className='text-sm bg-gray-100 px-3 py-1 rounded-full'>
                         {item.taste}
@@ -143,30 +194,30 @@ export function ItemDetailCard({
                 </div>
 
                 <div className='mt-8 flex gap-3'>
-                    <button 
-                        className='flex-1 bg-main text-white py-3 rounded-lg font-semibold hover:bg-main/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                    <button
+                        onClick={handleOrder}
                         disabled={item.stock === 0}
+                        className="flex-1 bg-main text-white py-3 rounded-lg font-semibold hover:bg-main/90 disabled:opacity-50"
                     >
                         {item.stock > 0 ? 'オーダーする' : '売り切れ'}
                     </button>
-                    <button 
+                    <button
                         onClick={handleFavoriteClick}
                         disabled={isPending}
-                        className={`px-6 border rounded-lg transition-colors ${
-                            isFavorited 
-                                ? 'bg-red-50 border-red-300' 
-                                : 'border-gray-300 hover:bg-gray-50'
-                        } disabled:opacity-50`}
+                        className={`px-6 border rounded-lg transition-colors ${isFavorited
+                            ? 'bg-red-50 border-red-300'
+                            : 'border-gray-300 hover:bg-gray-50'
+                            } disabled:opacity-50`}
                         title={
-                            !isAuthenticated 
-                                ? 'ログインしてお気に入りに追加' 
-                                : isFavorited 
-                                    ? 'お気に入りから削除' 
+                            !isAuthenticated
+                                ? 'ログインしてお気に入りに追加'
+                                : isFavorited
+                                    ? 'お気に入りから削除'
                                     : 'お気に入りに追加'
                         }
                     >
-                        <Heart 
-                            size={24} 
+                        <Heart
+                            size={24}
                             variant={isFavorited ? "Bold" : "Linear"}
                             className={isFavorited ? 'text-red-600 animate-pulse' : 'text-gray-600'}
                         />

@@ -1,12 +1,19 @@
 // lib/auth.ts
+
+// others
+import bcrypt from 'bcryptjs'
+
+// prisma
+import { Role } from '@prisma/client'
+import { prisma } from './prisma'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+
+// next-auth
 import { getServerSession, NextAuthOptions } from 'next-auth'
+import { DefaultSession } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { prisma } from './prisma'
-import bcrypt from 'bcryptjs'
-import { DefaultSession } from 'next-auth'
-import { Role } from '@prisma/client'
+
 
 declare module 'next-auth' {
     interface Session {
@@ -33,16 +40,23 @@ export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
 
     providers: [
+
+        // sign-in with google
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
+
+        // sign-in with email
         CredentialsProvider({
+
             name: 'Credentials',
+
             credentials: {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
+            
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
                     return null
@@ -109,6 +123,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             if (session.user) {
                 session.user.id = token.id
+                session.user.id = token.sub!
                 session.user.role = token.role  // Add role to session
             }
             return session

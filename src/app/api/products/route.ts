@@ -1,10 +1,11 @@
 // app/api/products/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { auth, authOptions } from '@/lib/auth';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { getServerSession } from 'next-auth';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,14 +17,17 @@ export async function POST(request: NextRequest) {
 
         // Parse form data
         const formData = await request.formData();
-        const image = formData.get('image') as File;
+        
+        // CHANGED: Get all images (multiple files)
+        const images = formData.getAll('images') as File[];
         const name = formData.get('name') as string;
         const description = formData.get('description') as string;
         const category = formData.get('category') as string;
         const taste = formData.get('taste') as string;
+        const sellerId = session.user.id;
 
         // Validate required fields
-        if (!image || !name || !description || !category || !taste) {
+        if (!images || images.length === 0 || !name || !description || !category || !taste) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -33,27 +37,42 @@ export async function POST(request: NextRequest) {
             await mkdir(uploadsDir, { recursive: true });
         }
 
-        // Save image to public/uploads folder
-        const bytes = await image.arrayBuffer();
-        const buffer = Buffer.from(bytes);
+        // CHANGED: Process and save all images
+        const imageUrls: string[] = [];
         
-        // Create unique filename
-        const timestamp = Date.now();
-        const filename = `${timestamp}-${image.name.replace(/\s+/g, '-')}`;
-        const filepath = join(uploadsDir, filename);
-        
-        await writeFile(filepath, buffer);
-        const imageUrl = `/uploads/${filename}`;
+        for (const image of images) {
+            // Validate that it's actually a file
+            if (!(image instanceof File)) continue;
+            
+            // Save image to public/uploads folder
+            const bytes = await image.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+            
+            // Create unique filename
+            const timestamp = Date.now();
+            const randomSuffix = Math.random().toString(36).substring(7);
+            const filename = `${timestamp}-${randomSuffix}-${image.name.replace(/\s+/g, '-')}`;
+            const filepath = join(uploadsDir, filename);
+            
+            await writeFile(filepath, buffer);
+            imageUrls.push(`/uploads/${filename}`);
+        }
 
-        // Save to database
+        // Validate that at least one image was successfully uploaded
+        if (imageUrls.length === 0) {
+            return NextResponse.json({ error: 'No images were uploaded' }, { status: 400 });
+        }
+
+        // Save to database with all image URLs
         const product = await prisma.product.create({
             data: {
                 name,
                 description,
-                image: imageUrl,
+                images: imageUrls, // Array of all image URLs
                 category,
                 taste,
                 stock: 1,
+                sellerId
             },
         });
 
@@ -66,8 +85,13 @@ export async function POST(request: NextRequest) {
 
 // Get all products for homepage
 export async function GET() {
+    const session = await getServerSession(authOptions);
+
     try {
         const products = await prisma.product.findMany({
+            where: {
+                sellerId: session?.user.id
+            },
             orderBy: {
                 createdAt: 'desc',
             },
