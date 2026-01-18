@@ -12,7 +12,7 @@ interface SignOutButtonProps {
 
 export default function SignOutButton({ className }: SignOutButtonProps) {
     const handleSignOut = () => {
-        signOut({ callbackUrl: '/register' }); 
+        signOut({ callbackUrl: '/login' }); 
     };
 
     return (

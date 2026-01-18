@@ -85,13 +85,13 @@ export async function POST(request: NextRequest) {
 
 // Get all products for homepage
 export async function GET() {
-    const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
     try {
         const products = await prisma.product.findMany({
-            where: {
-                sellerId: session?.user.id
-            },
+            // where: {
+            //     sellerId: session?.user.id
+            // },
             orderBy: {
                 createdAt: 'desc',
             },
