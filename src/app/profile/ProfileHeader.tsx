@@ -12,6 +12,8 @@ import { category1, category2, category3, category4, category5, category6, categ
 import { taste1, taste2, taste3, taste4, taste5, taste6 } from '@/lib/image';
 import Button from '@/components/Button';
 
+import sampleImg from '@/app/assets/imgs/logo.png'
+
 export default function ProfileHeader() {
 
     const { data: session, status } = useSession();
@@ -184,10 +186,10 @@ export default function ProfileHeader() {
     const user = session.user;
 
     return (
-        <>
-            <div className="flex items-center gap-4">
-                {user?.image && (
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white">
+        <div>
+            <div className="flex space-x-4 items-center max-w-full">
+                {user?.image ? (
+                    <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white">
                         <Image
                             src={user.image}
                             alt={user.name || 'User Profile'}
@@ -195,21 +197,35 @@ export default function ProfileHeader() {
                             style={{ objectFit: "cover" }}
                         />
                     </div>
-                )}
+                ) :
+                    <div className='relative w-20 h-20 border overflow-hidden border-main rounded-full'>
+                        <Image
+                            src={sampleImg || 'no-image'}
+                            alt={user.name || 'User Profile'}
+                            fill
+                            style={{ objectFit: "cover" }}
+                        />
+                    </div>
+                }
 
-                <h2 className="text-xl font-bold text-gray-800">{user?.name}</h2>
-            </div>
+                <div className=''>
+                    <h2 className="text-xl font-bold text-gray-800">{user?.name}</h2>
 
-            <div className='flex mt-4 gap-4'>
-                <Button className='border text-center text-[14px]' href="/profile/edit">
-                    <i className="fa-solid fa-user-pen"></i> アカウント設定
-                </Button>
-
-                {session.user.role === 'SELLER' && (
-                    <Button className='border text-center text-[14px]' onClick={onOpen}>
-                        <i className="fa-solid fa-plus"></i> 商品登録
+                    <Button className='border border-main flex justify-center py-1 items-center px-3 mt-2' href="/profile/edit">
+                        <p className='text-[14px]'>アカウント設定</p>
                     </Button>
-                )}
+
+                    <div className='flex mt-4 gap-2'>
+
+
+                        {session.user.role === 'SELLER' && (
+                            <Button className='border border-main flex justify-center items-center' onClick={onOpen}>
+                                <i className="text-[12px] fa-solid fa-plus"></i> 
+                                <p className='text-[12px]'>商品登録</p>
+                            </Button>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Multi-step Modal */}
@@ -313,8 +329,8 @@ export default function ProfileHeader() {
                                                     key={category.href}
                                                     onClick={() => setSelectedCategory(category.href)}
                                                     className={`text-center transition-all cursor-pointer ${selectedCategory === category.href
-                                                            ? 'border-main bg-main/10'
-                                                            : 'border-gray-300 hover:border-main/50'
+                                                        ? 'border-main bg-main/10'
+                                                        : 'border-gray-300 hover:border-main/50'
                                                         }`}
                                                 >
                                                     <CategoryUi
@@ -341,8 +357,8 @@ export default function ProfileHeader() {
                                                     key={taste.value}
                                                     onClick={() => setSelectedTaste(taste.value)}
                                                     className={`text-center transition-all cursor-pointer ${selectedTaste === taste.value
-                                                            ? 'border-main bg-main/10'
-                                                            : 'border-gray-300 hover:border-main/50'
+                                                        ? 'border-main bg-main/10'
+                                                        : 'border-gray-300 hover:border-main/50'
                                                         }`}
                                                 >
                                                     <CategoryUi
@@ -444,6 +460,6 @@ export default function ProfileHeader() {
                     )}
                 </ModalContent>
             </Modal>
-        </>
+        </div>
     );
 }

@@ -126,6 +126,9 @@ CREATE TABLE "Session" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Room_id_key" ON "Room"("id");
+
+-- CreateIndex
 CREATE INDEX "Room_sellerId_idx" ON "Room"("sellerId");
 
 -- CreateIndex

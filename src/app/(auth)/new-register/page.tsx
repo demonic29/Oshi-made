@@ -4,6 +4,8 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function NewUserRegister() {
     const [loading, setLoading] = useState(false);
@@ -22,37 +24,37 @@ export default function NewUserRegister() {
 
         try {
 
-        // Create user account
-        const registerResponse = await fetch("/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password }),
-        });
+            // Create user account
+            const registerResponse = await fetch("/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password }),
+            });
 
-        const registerData = await registerResponse.json();
+            const registerData = await registerResponse.json();
 
-        if (!registerResponse.ok) {
-            setError(registerData.error || "アカウント作成に失敗しました");
-            setLoading(false);
-            return;
-        }
+            if (!registerResponse.ok) {
+                setError(registerData.error || "アカウント作成に失敗しました");
+                setLoading(false);
+                return;
+            }
 
-        // Sign in the user
-        const result = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+            // Sign in the user
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
 
-        if (result?.error) {
-            setError("ログインに失敗しました");
-            setLoading(false);
-            return;
-        }
+            if (result?.error) {
+                setError("ログインに失敗しました");
+                setLoading(false);
+                return;
+            }
 
-        if (result?.ok) {
-            router.push("/new-register/choose-role");
-        }
+            if (result?.ok) {
+                router.push("/new-register/choose-role");
+            }
         } catch (error) {
             console.error(error);
             setError("エラーが発生しました");
@@ -61,64 +63,68 @@ export default function NewUserRegister() {
     }
 
     return (
-        <div className="max-w-md mx-auto mt-8 p-6">
-        <h1 className="text-2xl font-bold mb-6">新規アカウント作成</h1>
-        
-        {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-            </div>
-        )}
+        <div className="max-w-md mx-auto mt-20 p-6 bg-[#fffdfa]">
+            <h1 className="text-2xl text-center font-bold mb-6">新規アカウント作成</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <label className="block text-sm font-medium mb-1">
-                    ユーザー名
-                </label>
-                <input
-                    type="text"
-                    name="name"
-                    required
-                    className="w-full px-3 py-2 border-b"
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4l">
+                <div className="mb-4">
+                    <label className="block text-sm font-medium">
+                        ユーザー名
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        required
+                        className="w-full px-3 py-2 border-b"
+                        disabled={loading}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-sm font-medium">
+                        メールアドレス
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        className="w-full px-3 py-2 border-b"
+                        disabled={loading}
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium mb-1">
+                        パスワード
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        minLength={6}
+                        className="w-full px-3 py-2 border-b"
+                        disabled={loading}
+                    />
+                </div>
+
+                <Button
+                    type="submit"
                     disabled={loading}
-                />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium mb-1">
-                    メールアドレス
-                </label>
-                <input
-                    type="email"
-                    name="email"
-                    required
-                    className="w-full px-3 py-2 border-b"
-                    disabled={loading}
-                />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium mb-1">
-                    パスワード
-                </label>
-                <input
-                    type="password"
-                    name="password"
-                    required
-                    minLength={6}
-                    className="w-full px-3 py-2 border-b"
-                    disabled={loading}
-                />
-            </div>
-
-            <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-main text-white py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+                    className="w-full max-w-[80%] flex justify-center  mx-auto bg-main text-white py-6 mt-10 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
                 >
-                {loading ? "処理中..." : "次へ"}
-            </button>
-        </form>
+                    {loading ? "処理中..." : "次へ"}
+                </Button>
+
+                <Link href="/login" className="text-text text-[12px] mt-4">
+                    ログイン
+                </Link>
+            </form>
         </div>
     );
 }

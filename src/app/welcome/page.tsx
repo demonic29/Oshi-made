@@ -5,26 +5,26 @@ import React, { useState, useRef } from "react";
 // import { Camera } from 'react-camera-pro'
 
 // Images
-import img1 from "@/app/assets/imgs/welcome_01.png"
-import img2 from "@/app/assets/imgs/2.png"
-import img3 from "@/app/assets/imgs/3.png"
+import img1 from "@/app/assets/imgs/welcome/logo.png"
+import img2 from "@/app/assets/imgs/welcome/welcome_01.png"
+import img3 from "@/app/assets/imgs/welcome/welcome_02.png"
 import Link from "next/link";
 
 const Welcome = () => {
     const [screens] = useState([
         { 
-            text: "あけぼのやわらかな光が、まどろむ教室をそっとつつむ。いつもの席に、ひとりのわたし。視界は、窓の外の空にとどまる。",
-            img: img3, 
+            text: "",
+            img: img1, 
             id: 1 
         },
         { 
-            text: "うたかたのような夢を見ていたのかもしれない。えんぴつを手に、ノートに心の色をそっと重ねる。", 
+            text: "", 
             img: img2, 
             id: 2 
         },
         { 
             text: "", 
-            img: img1, 
+            img: img3, 
             id: 3 
         },
     ]);
@@ -91,7 +91,7 @@ const Welcome = () => {
                 <>
                 <Link
                     href="/register"
-                    className="bg-main w-full text-center block rounded-lg text-white py-3 mb-2"
+                    className="bg-main w-[80%] mx-auto text-center block rounded-lg text-white py-3 mb-2"
                 >
                     会員登録
                 </Link>

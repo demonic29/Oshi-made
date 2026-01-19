@@ -24,7 +24,7 @@ export default function RootLayout({
         />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
       </head>
-      <body className="antialiased max-w-[390px] bg-[#FFFDFA]">
+      <body className="antialiased max-w-[393px] bg-[#FFFDFA]">
         <ErrorBoundary errorComponent={GlobalError}>
           <Providers>
             {children}

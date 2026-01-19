@@ -89,14 +89,13 @@ export default function ProfileCard() {
         <div className="flex flex-col min-h-screen px-4">
             <HeaderBar title='アカウント'/>
             
-            <div className="flex-1 pb-24">
+            <div className="">
                 <ProfileHeader/>
 
                 {/* Favorite Products Section */}
                 <section className='mt-6'>
                     <div className='flex items-center justify-between mb-3'>
-                        <h2 className='font-semibold text-main text-base flex items-center gap-2'>
-                            <i className="fa-solid fa-bookmark"></i>
+                        <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>    
                             お気に入りの商品
                         </h2>
                         {favoriteProducts.length > 0 && (
@@ -116,7 +115,6 @@ export default function ProfileCard() {
                         </div>
                     ) : favoriteProducts.length === 0 ? (
                         <div className='text-center py-12 bg-white rounded-lg border border-gray-200'>
-                            <i className="fa-regular fa-bookmark text-4xl text-gray-300 mb-3"></i>
                             <p className='text-gray-500 text-sm'>まだお気に入りの商品がありません</p>
                         </div>
                     ) : (
@@ -142,8 +140,7 @@ export default function ProfileCard() {
                 {currentUser && userRole === 'SELLER' ? (
                     <section className='mt-8'>
                         <div className='flex items-center justify-between mb-3'>
-                            <h2 className='font-semibold text-main text-base flex items-center gap-2'>
-                                <i className="fa-solid fa-box"></i>
+                            <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>                               
                                 出品した商品
                             </h2>
                             {userProducts.length > 0 && (
@@ -159,7 +156,6 @@ export default function ProfileCard() {
                             </div>
                         ) : userProducts.length === 0 ? (
                             <div className='text-center py-12 bg-white rounded-lg border border-gray-200'>
-                                <i className="fa-regular fa-box text-4xl text-gray-300 mb-3"></i>
                                 <p className='text-gray-500 text-sm mb-4'>まだ出品した商品がありません</p>
                             </div>
                         ) : (

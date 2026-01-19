@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import sampleImg from '@/app/assets/imgs/1.png'
+import sampleImg from '@/app/assets/imgs/welcome/welcome_02.png'
 // import { Button } from '@/components/ui/button'
 import Button from '@/components/Button'
 import { signIn } from 'next-auth/react'
@@ -17,29 +17,29 @@ export default function RegisterPage() {
     }
     
     return (
-        <div className='px-4 flex flex-col gap-10 justify-center items-center pt-6'>
-            <div className='relative max-w-md w-full h-[400px]'>
+        <div className='px-4 bg-[#fffdfa] flex flex-col gap-10 justify-center items-center pt-6'>
+            <div className='relative max-w-md w-full h-[600px]'>
                 <Image
                     alt='this is image'
                     src={sampleImg}
                     fill
-                    objectFit='cover'
+                    objectFit='contain'
                     className='rounded-lg'
                 />
             </div>
 
             <div className=' flex flex-col w-full gap-2'>
                 <Button
-                    className='bg-main text-center text-white'
+                    className='py-2 max-w-[80%] mx-auto w-full bg-main text-center text-white'
                     href='/new-register'
                 >
                     メールアドレス
                 </Button>
                 <Button
                     onClick={googleRegister}
-                    className='border border-text text-main'
+                    className='py-2 max-w-[80%] mx-auto w-full border bg-main text-white'
                 >
-                    グーグル
+                    グーグルアカウント
                 </Button>
             </div>
 

@@ -53,18 +53,17 @@ export default async function RoleSelectionPage() {
     }
 
     return (
-        <div className="p-4 flex flex-col justify-center items-center h-screen">
+        <div className="p-4 flex flex-col justify-center items-center mt-20 bg-[#fffdfa] h-full">
             
             <div>
                 <h1 className="text-2xl font-bold mb-6">新規アカウント登録</h1>
             
-                <p className="text-sm text-gray-500 mb-4">
-                    {/* Welcome, {user.email} */}
+                <p className="text-sm text-gray-900 font-bold mb-4">
                     利用方法
                 </p>
             </div>
             
-            <div className="space-y-4 flex gap-4">
+            <div className="space-y-4 flex gap-20">
                 <form action={selectSeller}>
                     <button 
                         type="submit"

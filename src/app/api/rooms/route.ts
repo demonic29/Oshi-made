@@ -64,9 +64,23 @@ export async function GET() {
             buyer: {
                 select: { name: true, image: true}
             },
+            messages: {
+                take: 1,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    content: true,
+                    type: true,
+                    createdAt: true
+                }                
+            }
         },
         orderBy: { updatedAt: "desc" },
     });
 
-    return NextResponse.json(rooms);
+    const roomsWithFlag = rooms.map(room => ({
+        ...room,
+        isBuyer: room.buyerId === session.user.id
+    }));
+
+    return NextResponse.json(roomsWithFlag);
 }

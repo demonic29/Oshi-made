@@ -54,7 +54,7 @@ model Product {
 }
 
 model Room {
-  id        String @id @default(cuid()) // room_id
+  id        String @id @default(cuid()) @unique // room_id
   
   productId String
   product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -90,6 +90,7 @@ model Message {
 
   @@index([roomId])
   @@index([createdAt])
+  @@map("Message")
 }
 
 model Order {
