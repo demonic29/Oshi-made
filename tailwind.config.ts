@@ -6,7 +6,7 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(input|modal|select|form|listbox|divider|popover|button|ripple|spinner|scroll-shadow).js"
+    "./node_modules/@heroui/theme/dist/components/(input|input-otp|modal|select|form|listbox|divider|popover|button|ripple|spinner|scroll-shadow).js"
   ],
   plugins: [heroui()],
 } satisfies Config;

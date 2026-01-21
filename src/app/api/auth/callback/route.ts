@@ -8,6 +8,8 @@ export async function GET(request: Request) {
     const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/'
 
+    
+
     if (code) {
         const { error } = await (await supabase()).auth.exchangeCodeForSession(code)
         
@@ -19,3 +21,4 @@ export async function GET(request: Request) {
     // Return the user to an error page with instructions
     return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
+

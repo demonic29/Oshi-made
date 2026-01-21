@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import logo from '@/app/assets/imgs/logo.png';
 import { Message } from '@/app/chat/[roomId]/roomType'
 import { useSession } from 'next-auth/react'
+import Loading from './Loading'
 
 type Room = {
     id: string
@@ -67,7 +68,6 @@ export default function ChatPage() {
         return (
             <div>
                 <HeaderBar title='チャット' />
-                <div className='flex justify-center items-center h-screen text-main'>ローディング中。。。</div>
             </div>
         )
     }
@@ -78,7 +78,7 @@ export default function ChatPage() {
 
             <div className="p-2">
                 {isLoading ? (
-                    <p>Loading...</p>
+                    <p className='flex text-main justify-center items-center h-screen'>少々お待ちを。。。</p>
                 ) : rooms.length === 0 ? (
                     <p>No chats yet</p>
                 ) : (

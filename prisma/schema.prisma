@@ -9,25 +9,26 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   password      String?
   role          Role?
-  emailVerified DateTime?
+  phone         String?    @unique
+  supabaseId    String?    @unique
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
-  accounts  Account[]
-  sessions  Session[]
-  messages  Message[]
-  orders    Order[]
-  favorites Favorite[]
+  accounts      Account[]
+  sessions      Session[]
+  messages      Message[]
+  orders        Order[]
+  favorites     Favorite[]
 
   // Chat relations
   buyerRooms  Room[] @relation("BuyerRooms")
-  sellerRooms  Room[] @relation("SellerRooms")
+  sellerRooms Room[] @relation("SellerRooms")
 
   // Product relation
   products Product[] @relation("SellerProducts")
@@ -54,16 +55,16 @@ model Product {
 }
 
 model Room {
-  id        String @id @default(cuid()) @unique // room_id
-  
-  productId String
-  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id String @id @unique @default(cuid()) // room_id
 
-  buyerId   String
-  buyer     User @relation("BuyerRooms", fields: [buyerId], references: [id], onDelete: Cascade)
-  
-  sellerId  String
-  seller    User @relation("SellerRooms", fields: [sellerId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  buyerId String
+  buyer   User   @relation("BuyerRooms", fields: [buyerId], references: [id], onDelete: Cascade)
+
+  sellerId String
+  seller   User   @relation("SellerRooms", fields: [sellerId], references: [id], onDelete: Cascade)
 
   messages Message[]
 

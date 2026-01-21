@@ -27,4 +27,5 @@ export type RoomData = {
     image: string | null;
   };
   isBuyer: boolean;
+  isSeller: boolean;
 };

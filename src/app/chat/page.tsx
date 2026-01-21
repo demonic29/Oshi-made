@@ -2,6 +2,7 @@
 
 import BottomTabs from '@/components/ui/BottomTabs'
 import ChatWindow from '@/components/ui/ChatWindow'
+import Loading from '@/components/ui/Loading'
 import { SessionProvider, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -20,7 +21,7 @@ export default function ChatPage() {
 
 
   if (status === 'loading') {
-    return <div>Loading...</div>
+    return <div><Loading/></div>
   }
 
   return (

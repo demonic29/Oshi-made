@@ -8,6 +8,11 @@ import { useSession } from 'next-auth/react';
 import Image from "next/image";
 import { Message, RoomData } from "./roomType";
 import { useParams, useRouter } from "next/navigation";
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+import imgIcon from '@/app/assets/imgs/img-icon.png';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,58 +43,35 @@ export default function Chat() {
     const pendingMessagesRef = useRef<Set<string>>(new Set());
     const lastMessageIdRef = useRef<string | null>(null);
 
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+
     /* ----------------------------- INIT ----------------------------- */
 
     useEffect(() => {
-        if (status === "loading") return;
-        if (!roomId || initializedRef.current) return;
-
-        initializedRef.current = true;
+        if (status !== "authenticated") return;
+        if (!roomId) return;
 
         const fetchData = async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                console.log("📡 Fetching room data for:", roomId);
-
-                // Fetch room data
                 const roomRes = await fetch(`/api/rooms/${roomId}`, {
-                    credentials: "include"
+                    credentials: "include",
                 });
-                if (!roomRes.ok) {
-                    if (roomRes.status === 404) {
-                        setError("Chat room not found");
-                        return;
-                    }
-                    if (roomRes.status === 403) {
-                        setError("You don't have access to this chat");
-                        return;
-                    }
-                    throw new Error(`Failed to fetch room: ${roomRes.status}`);
-                }
+                if (!roomRes.ok) throw new Error("Room fetch failed");
                 const roomData = await roomRes.json();
-                console.log("✅ Room data loaded:", roomData.id);
                 setRoom(roomData);
 
-                // Fetch messages
                 const messagesRes = await fetch(`/api/messages?roomId=${roomId}`, {
-                    credentials: "include"
+                    credentials: "include",
                 });
-                if (!messagesRes.ok) {
-                    throw new Error(`Failed to fetch messages: ${messagesRes.status}`);
-                }
+                if (!messagesRes.ok) throw new Error("Messages fetch failed");
                 const messagesData = await messagesRes.json();
-                console.log(`✅ Loaded ${messagesData.length} messages`);
                 setMessages(messagesData);
-
-                // Store last message ID
-                if (messagesData.length > 0) {
-                    lastMessageIdRef.current = messagesData[messagesData.length - 1].id;
-                }
-            } catch (error) {
-                console.error("❌ Error fetching data:", error);
-                setError("Failed to load chat. Please try again.");
+            } catch (e) {
+                setError("Failed to load chat");
             } finally {
                 setLoading(false);
             }
@@ -98,40 +80,9 @@ export default function Chat() {
         fetchData();
     }, [roomId, status]);
 
+
     /* ------------------------- POLLING (FALLBACK) ------------------------- */
 
-    useEffect(() => {
-        if (!USE_POLLING || !roomId || !room) return;
-
-        console.log("🔄 Using polling mode (checking every 2 seconds)");
-
-        const interval = setInterval(async () => {
-            try {
-                const res = await fetch(`/api/messages?roomId=${roomId}`, {
-                    credentials: "include"
-                });
-
-                if (!res.ok) return;
-
-                const newMessages = await res.json();
-
-                // Only update if there are new messages
-                if (newMessages.length > messages.length) {
-                    console.log(`📨 Polling found ${newMessages.length - messages.length} new messages`);
-                    setMessages(newMessages);
-
-                    // Update last message ID
-                    if (newMessages.length > 0) {
-                        lastMessageIdRef.current = newMessages[newMessages.length - 1].id;
-                    }
-                }
-            } catch (error) {
-                console.error("Polling error:", error);
-            }
-        }, 1000); // Poll every 2 seconds
-
-        return () => clearInterval(interval);
-    }, [roomId, room, messages.length, USE_POLLING]);
 
     /* ------------------------- REALTIME (IF ENABLED) ------------------------- */
 
@@ -331,8 +282,8 @@ export default function Chat() {
 
     if (status === "loading" || loading) {
         return (
-            <div className="h-screen flex items-center justify-center">
-                <p>Loading chat...</p>
+            <div className='flex items-center justify-center py-12 h-screen'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-main'></div>
             </div>
         );
     }
@@ -359,9 +310,7 @@ export default function Chat() {
         );
     }
 
-    const canSend =
-        room.buyerId === session.user.id ||
-        room.sellerId === session.user.id;
+    const canSend = room.buyerId === session.user.id || room.sellerId === session.user.id;
 
     const isSender = (m: Message) => m.userId === session.user.id;
 
@@ -372,8 +321,13 @@ export default function Chat() {
         }
     };
 
+    const isSeller = session.user.id === room.sellerId;
+    const isBuyer = session.user.id === room.buyerId;
+
+
+
     return (
-        <div className="flex flex-col h-screen">
+        <div className={` ${isOpen && 'bg-text opacity-50'} flex flex-col h-screen`}>
 
             <div className="px-4">
                 <HeaderBar title={room.otherUser.name ?? "Chat"} />
@@ -397,13 +351,17 @@ export default function Chat() {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {messages.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
-                        <p className="text-gray-500">No messages yet. Start the conversation!</p>
+                        <p className="text-gray-500">オーダーを始めよう！</p>
                     </div>
                 ) : (
                     messages.map(msg => (
                         <div key={msg.id} className={`flex ${isSender(msg) ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`rounded-lg p-3 max-w-[70%] ${msg.type === 'IMAGE' && 'border-none p-0'} ${isSender(msg) && 'border rounded-xl'
-                                } ${msg.isOptimistic ? 'opacity-60' : ''}`}>
+                            <div
+                                className={
+                                    ` py-1 px-5 border-text max-w-[70%] border ${msg.type === 'IMAGE' && 'border-none p-0'} ${isSender(msg) ? 'rounded-t-2xl rounded-l-xl'
+                                        : 'rounded-t-2xl rounded-r-xl'} ${msg.isOptimistic ? 'opacity-60' : ''}`
+                                }
+                            >
                                 {msg.type === 'IMAGE' && msg.fileUrl ? (
                                     <div className="mt-2">
                                         <Image
@@ -418,9 +376,9 @@ export default function Chat() {
                                 ) : (
                                     <p>{msg.content}</p>
                                 )}
-                                <p className="text-xs mt-1 opacity-75">
+                                {/* <p className="text-xs mt-1 opacity-75">
                                     {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </p>
+                                </p> */}
                             </div>
                         </div>
                     ))
@@ -432,30 +390,62 @@ export default function Chat() {
                 <button
                     onClick={openFile}
                     disabled={uploading || !canSend}
-                    className="px-3 py-2 bg-main rounded hover:bg-gray-200 disabled:opacity-50"
                 >
                     {uploading ? '📤' :
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-white">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                        </svg>
+                        <Image
+                            width={30}
+                            height={30}
+                            alt="image-icon"
+                            src={imgIcon}
+                        />
                     }
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleFileChange} />
+
                 <input
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Type a message..."
+                    placeholder="テキスト入力。。。"
                     disabled={!canSend}
-                    className="flex-1 border rounded-xl px-3 py-2 disabled:opacity-50"
+                    className="flex-1 border rounded-t-xl py-1 rounded-l-xl ms-2 px-3 disabled:opacity-50"
                 />
-                <button
-                    onClick={sendMessage}
-                    disabled={!message.trim() || !canSend}
-                    className="px-4 py-2 bg-text text-white rounded hover:bg-blue-600 disabled:opacity-50"
-                >
-                    送信
-                </button>
+
+                {/* seller confirm modal */}
+                {
+                    isSeller && (
+                        <Button
+                            onClick={onOpen}
+                            // disabled={!message.trim() || !canSend}
+                            className="px-4 py-2 text-text rounded hover:bg-blue-600 disabled:opacity-50"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                            </svg>
+
+                            <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+                                <ModalContent className="bg-white p-10 mx-auto max-h-[40%] max-w-[85%] rounded-lg shadow">
+                                    {(onClose) => (
+                                        <>
+                                            <ModalBody>
+                                                <p className="text-center">完成でよろしいですか？</p>
+                                            </ModalBody>
+                                            <ModalFooter className="max-w-fit flex justify-center space-x-8">
+                                                <Button className="bg-accent px-8 py-5 shadow-lg" variant="default" onClick={onClose}>
+                                                    いいえ
+                                                </Button>
+                                                <Button onClick={() => { router.push('/confirm') }} className="bg-main px-8 py-5 shadow-lg">
+                                                    はい
+                                                </Button>
+                                            </ModalFooter>
+                                        </>
+                                    )}
+                                </ModalContent>
+                            </Modal>
+
+                        </Button>
+                    )
+                }
             </div>
         </div>
     );

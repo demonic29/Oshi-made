@@ -72,6 +72,8 @@ export default function SearchPage() {
             
             const data = await response.json()
             setProducts(data.products || [])
+
+            console.log("this is", data);
         } catch (err) {
             console.error('Search error:', err)
             setError('検索中にエラーが発生しました')
@@ -189,7 +191,7 @@ export default function SearchPage() {
                                     id={product.id}
                                     name={product.name}
                                     description={product.description}
-                                    image={product.image}
+                                    images={product.images}
                                     category={product.category}
                                     taste={product.taste}
                                     stock={product.stock}

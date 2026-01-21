@@ -20,11 +20,13 @@ declare module 'next-auth' {
         user: {
             id: string
             role?: Role  // Add role to session type
+            phone?: string
         } & DefaultSession['user']
     }
     
     interface User {
         role?: Role  // Add role to user type
+        phone?: string
     }
 }
 
