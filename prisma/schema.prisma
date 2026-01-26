@@ -166,6 +166,7 @@ enum MessageType {
   TEXT
   IMAGE
   SYSTEM
+  CONFIRM
 }
 
 enum Role {

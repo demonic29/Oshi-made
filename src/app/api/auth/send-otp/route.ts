@@ -1,35 +1,53 @@
-// app/api/auth/sync/route.ts
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const { phone } = await req.json();
     const session = await auth();
+    if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    if (!session?.user?.id) {
-        return Response.json({ error: "Not authenticated" }, { status: 401 });
-    }
+    const { phone, roomId, price } = await req.json();
 
-    // Update user's phone
-    const user = await prisma.user.update({
-        where: { id: session.user.id },
-        data: { phone },
-    });
+    try {
+        // Use a transaction to ensure everything succeeds or nothing does
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. Update the user's phone
+            await tx.user.update({
+                where: { id: session.user.id },
+                data: { phone: phone }
+            });
 
-    // ✅ Find user's pending order and update status
-    const pendingOrder = await prisma.order.findFirst({
-        where: {
-            userId: session.user.id,
-            status: "pending",
-        },
-    });
+            if (roomId) {
+                // 2. Find the room to get the product ID
+                const room = await tx.room.findUnique({
+                    where: { id: roomId },
+                });
 
-    if (pendingOrder) {
-        await prisma.order.update({
-            where: { id: pendingOrder.id },
-            data: { status: "phone_verified" },
+                if (!room || !room.productId) {
+                    throw new Error("Product not found in room");
+                }
+
+                // 3. Create the Order AND the OrderItem together
+                return await tx.order.create({
+                    data: {
+                        userId: session.user.id,
+                        total: Number(price), // Use the custom price from UI
+                        status: "phone_verified",
+                        items: {
+                            create: {
+                                productId: room.productId,
+                                quantity: 1,
+                                price: Number(price), // Record the price at the time of sale
+                            }
+                        }
+                    }
+                });
+            }
         });
-    }
 
-    return Response.json({ user });
+        return NextResponse.json({ success: true, order: result });
+    } catch (error: any) {
+        console.error("❌ Order Creation Error:", error);
+        return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    }
 }

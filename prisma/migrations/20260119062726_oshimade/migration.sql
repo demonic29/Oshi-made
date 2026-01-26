@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "MessageType" AS ENUM ('TEXT', 'IMAGE', 'SYSTEM');
+CREATE TYPE "MessageType" AS ENUM ('TEXT', 'IMAGE', 'SYSTEM', 'CONFIRM');
 
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('BUYER', 'SELLER');

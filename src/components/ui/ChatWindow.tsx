@@ -64,12 +64,6 @@ export default function ChatPage() {
         fetchRoomData()
     }, [status])
 
-    // wait for session to load
-    // if (status !== 'authenticated') {
-    //     return (
-
-    //     )
-    // }
 
     return (
         <div>

@@ -1,9 +1,10 @@
+
 export interface Message {
   id: string;
   content: string | null;
   userId: string | null;
   roomId: string;
-  type: "TEXT" | "IMAGE" | "SYSTEM";
+  type:  'TEXT' | 'IMAGE' | 'CONFIRM' | 'SYSTEM';
   createdAt: string;
   updatedAt: string;
   isOptimistic: boolean;
