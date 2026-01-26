@@ -36,6 +36,7 @@ export default function CartPage() {
     const router = useRouter();
 
     const isBuyer = session?.user?.role === 'BUYER';
+    const isSeller = session?.user?.role === 'SELLER';
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -50,8 +51,8 @@ export default function CartPage() {
                 const data = await response.json();
                 setOrders(data.orders || []);
             } catch (err) {
-                console.error('Error fetching orders:', err);
-                setError('Failed to load orders');
+                // console.error('Error fetching orders:', err);
+                // setError('Failed to load orders');
             } finally {
                 setIsLoading(false);
             }
@@ -66,25 +67,25 @@ export default function CartPage() {
         return <div className="flex items-center justify-center h-screen">読み込み中...</div>;
     }
 
-    if (!isBuyer) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <p>あなたは購入者ではありません。</p>
-            </div>
-        );
-    }
+    // if (!isBuyer) {
+    //     return (
+    //         <div className="flex items-center justify-center h-screen">
+    //             <p>あなたは購入者ではありません。</p>
+    //         </div>
+    //     );
+    // }
 
     if (error) {
         return <div className="flex items-center justify-center h-screen text-red-500">{error}</div>;
     }
 
     // Check if user has phone verified
-    const hasPhoneVerified = session?.user?.phone;
+    // const hasPhoneVerified = session?.user?.phone;
 
-    if (!hasPhoneVerified) {
-        router.push('/auth/login');
-        return null;
-    }
+    // if (!hasPhoneVerified) {
+    //     router.push('/auth/login');
+    //     return null;
+    // }
 
     return (
         <div>
@@ -93,6 +94,7 @@ export default function CartPage() {
             </div>
 
             <div className='px-8 mt-8'>
+                <h3 className='text-text'>注文履歴</h3>
                 {orders.length === 0 ? (
                     <p className="text-center text-gray-500">カートは空です</p>
                 ) : (
@@ -100,11 +102,10 @@ export default function CartPage() {
                         <div key={order.id} className="mb-8">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="font-semibold">注文 #{order.id.slice(0, 8)}</h3>
-                                <span className={`px-3 py-1 rounded-full text-sm ${
-                                    order.status === 'phone_verified' ? 'bg-green-100 text-green-800' :
-                                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-gray-100 text-gray-800'
-                                }`}>
+                                <span className={`px-3 py-1 rounded-full text-sm ${order.status === 'phone_verified' ? 'bg-green-100 text-green-800' :
+                                        order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                            'bg-gray-100 text-gray-800'
+                                    }`}>
                                     {order.status}
                                 </span>
                             </div>
@@ -134,6 +135,14 @@ export default function CartPage() {
                         </div>
                     ))
                 )}
+            </div>
+
+            <div className='px-8 mt-8'>
+                {
+                    isSeller && (
+                        <h3 className=' text-text'>売る商品</h3>
+                    )
+                }
             </div>
 
             {orders.length > 0 && (

@@ -9,6 +9,7 @@ import logo from '@/app/assets/imgs/logo.png';
 import { Message } from '@/app/chat/[roomId]/roomType'
 import { useSession } from 'next-auth/react'
 import Loading from './Loading'
+import GlobalButton from '../GlobalButton'
 
 type Room = {
     id: string
@@ -64,13 +65,11 @@ export default function ChatPage() {
     }, [status])
 
     // wait for session to load
-    if (status === 'loading') {
-        return (
-            <div>
-                <HeaderBar title='チャット' />
-            </div>
-        )
-    }
+    // if (status !== 'authenticated') {
+    //     return (
+
+    //     )
+    // }
 
     return (
         <div>
@@ -79,14 +78,31 @@ export default function ChatPage() {
             <div className="p-2">
                 {isLoading ? (
                     <p className='flex text-main justify-center items-center h-screen'>少々お待ちを。。。</p>
+                ) : status !== 'authenticated' ? (
+                    <div className=''>
+                        <HeaderBar title='チャット' />
+
+                        <div className='flex flex-col overflow-hidden gap-4 justify-center items-center h-screen'>
+                            <div className='text-center mb-6'>
+                                <p className='text-lg font-bold mb-2'>このチャットは会員のみになっています。</p>
+                                <p>始めに会員登録してください。</p>
+                            </div>
+
+                            <Link href="/new-register">
+                                <GlobalButton title='新規登録' />
+                            </Link>
+                            <Link className='underline' href="/login">ログイン</Link>
+                        </div>
+                    </div>
+
                 ) : rooms.length === 0 ? (
-                    <p>No chats yet</p>
+                    <p>まだチャットはありません</p>
                 ) : (
                     <div className="">
                         {rooms.map((room) => {
 
                             const otherUser = room.isBuyer ? room.seller : room.buyer;
-                            const currentUserIs = room.isBuyer ? 'buyer' : "seller";                           
+                            const currentUserIs = room.isBuyer ? 'buyer' : "seller";
 
                             return (
                                 <Link
@@ -109,7 +125,7 @@ export default function ChatPage() {
                                             {otherUser.name || '指名なし'}
                                         </h3>
                                         <p className="text-sm text-gray-500">
-                                            <span>商品名: </span> {room.product.name}                                        </p>                
+                                            <span>商品名: </span> {room.product.name}                                        </p>
                                     </div>
                                 </Link>
                             )

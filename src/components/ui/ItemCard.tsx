@@ -10,6 +10,8 @@ import { toggleFavorite } from '@/app/actions/favorite';
 import { toast } from 'sonner'; // or your preferred toast library
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import GlobalButton from '../GlobalButton';
+import { Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from '@heroui/modal';
 
 interface ItemCardProps {
     id: string;
@@ -84,10 +86,12 @@ export function ItemDetailCard({
         item.images[0] ?? '/no-images.png'
     )
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const handleOrder = async () => {
         if (!isAuthenticated) {
-            router.push('/api/register');
-            return;
+            onOpen()
+            return
         }
 
         const res = await fetch('/api/rooms', {
@@ -202,40 +206,67 @@ export function ItemDetailCard({
                     <p>登録日: {new Date(item.createdAt).toLocaleDateString('ja-JP')}</p>
                 </div>
 
-                {
-                    isUser === item.sellerId ? '' : (
-                        <div className='mt-8 flex gap-3'>
-                            <button
-                                onClick={handleOrder}
-                                disabled={item.stock === 0}
-                                className="flex-1 bg-main text-white py-3 rounded-lg font-semibold hover:bg-main/90 disabled:opacity-50"
-                            >
-                                {item.stock > 0 ? 'オーダーする' : '売り切れ'}
-                            </button>
-                            <button
-                                onClick={handleFavoriteClick}
-                                disabled={isPending}
-                                className={`px-6 border rounded-lg transition-colors ${isFavorited
-                                    ? 'bg-red-50 border-red-300'
-                                    : 'border-gray-300 hover:bg-gray-50'
-                                    } disabled:opacity-50`}
-                                title={
-                                    !isAuthenticated
-                                        ? 'ログインしてお気に入りに追加'
-                                        : isFavorited
-                                            ? 'お気に入りから削除'
-                                            : 'お気に入りに追加'
-                                }
-                            >
-                                <Heart
-                                    size={24}
-                                    variant={isFavorited ? "Bold" : "Linear"}
-                                    className={isFavorited ? 'text-red-600 animate-pulse' : 'text-gray-600'}
-                                />
-                            </button>
-                        </div>
-                    )
-                }
+                <div className='relative'>
+                    <Modal
+                        isOpen={isOpen}
+                        placement='center'                        
+                        onClose={onClose}
+                        className='bg-gray-100 absolute bottom-0 rounded-t-2xl mx-auto w-full pb-8'
+                    >
+                        <ModalContent>
+                            <ModalHeader className='mt-12 text-xl'>会員登録</ModalHeader>
+                            <ModalBody>
+                                この機能のロックを解除するには登録してください
+
+                                <div className='flex mt-4 gap-4 items-center'>
+                                    <Link href="/register">
+                                        <GlobalButton title='新規登録' />
+                                    </Link>
+                                    <Link href="/login">
+                                        <button className='text-text underline'>ログイン</button>
+                                    </Link>
+                                </div>
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
+                </div>
+
+                <div>
+                    {
+                        isUser === item.sellerId ? '' : (
+                            <div className='mt-8 flex gap-3'>
+                                <button
+                                    onClick={handleOrder}
+                                    disabled={item.stock === 0}
+                                    className="flex-1 bg-main text-white py-3 rounded-lg font-semibold hover:bg-main/90 disabled:opacity-50"
+                                >
+                                    {item.stock > 0 ? 'オーダーする' : '売り切れ'}
+                                </button>
+                                <button
+                                    onClick={handleFavoriteClick}
+                                    disabled={isPending}
+                                    className={`px-6 border rounded-lg transition-colors ${isFavorited
+                                        ? 'bg-red-50 border-red-300'
+                                        : 'border-gray-300 hover:bg-gray-50'
+                                        } disabled:opacity-50`}
+                                    title={
+                                        !isAuthenticated
+                                            ? 'ログインしてお気に入りに追加'
+                                            : isFavorited
+                                                ? 'お気に入りから削除'
+                                                : 'お気に入りに追加'
+                                    }
+                                >
+                                    <Heart
+                                        size={24}
+                                        variant={isFavorited ? "Bold" : "Linear"}
+                                        className={isFavorited ? 'text-red-600 animate-pulse' : 'text-gray-600'}
+                                    />
+                                </button>
+                            </div>
+                        )
+                    }
+                </div>
 
             </div>
         </div>
