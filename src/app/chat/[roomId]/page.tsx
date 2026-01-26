@@ -89,7 +89,18 @@ export default function Chat() {
 
         const channel = pusher.subscribe(`room-${roomId}`);
         channel.bind('new-message', (newMessage: Message) => {
-            setMessages(prev => prev.some(m => m.id === newMessage.id) ? prev : [...prev, newMessage]);
+
+            if (newMessage.userId === session?.user.id) {
+                console.log("♻️ Ignoring own message from Pusher broadcast");
+                return;
+            }
+
+            setMessages(prev => {
+
+                if (prev.some(m => m.id === newMessage.id)) return prev;
+                return [...prev, newMessage];
+            }
+            )
         });
 
         return () => {
@@ -125,12 +136,12 @@ export default function Chat() {
 
         setSendingMessage(true);
         const tempId = `temp-${Date.now()}`;
-        
+
         // Optimistic Update
-        const optimisticMsg: any = { 
-            id: tempId, ...payload, userId: session.user.id, 
+        const optimisticMsg: any = {
+            id: tempId, ...payload, userId: session.user.id,
             createdAt: new Date().toISOString(), user: { name: session.user.name },
-            isOptimistic: true 
+            isOptimistic: true
         };
         setMessages(prev => [...prev, optimisticMsg]);
         setMessage("");
@@ -164,7 +175,7 @@ export default function Chat() {
             });
             const { signedUrl, path } = await signRes.json();
             await fetch(signedUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
-            
+
             const { data } = supabase.storage.from('chat-files').getPublicUrl(path);
             await fetch('/api/messages', {
                 method: 'POST',
@@ -188,31 +199,37 @@ export default function Chat() {
 
             {/* Message List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((msg, idx) => (
-                    <div key={msg.id || idx} className={`flex ${msg.userId === session?.user?.id ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[75%] border border-text rounded-2xl py-2 px-4 
-                            ${msg.userId === session?.user?.id ? 'bg-text text-white rounded-tr-none' : 'bg-white text-text rounded-tl-none'}
-                            ${msg.type === 'IMAGE' ? 'p-0 border-none bg-transparent' : ''}
-                            ${msg.isOptimistic ? 'opacity-50' : ''}`}>
-                            
-                            {msg.type === 'CONFIRM' ? (
-                                <div className="p-2">
-                                    {isBuyer ? (
-                                        <button onClick={buyerConfirmModal.onOpen} className="bg-main text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-transform">
-                                            ✅ 注文内容を確認する
-                                        </button>
-                                    ) : (
-                                        <div className="bg-gray-100 text-text px-4 py-2 rounded-lg italic text-sm">✅ 確認リンクを送信しました</div>
-                                    )}
-                                </div>
-                            ) : msg.type === 'IMAGE' ? (
-                                <Image src={msg.fileUrl!} alt="Chat" width={250} height={250} className="rounded-xl" />
-                            ) : (
-                                <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                            )}
+                {messages.map((msg, idx) => {
+                    // Use the actual ID, fall back to index if necessary
+                    const uniqueKey = `${msg.id}-${msg.createdAt}-${idx}-${Date.now()}`;
+
+                    return (
+                        <div key={uniqueKey} className={`flex ${msg.userId === session?.user?.id ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[75%] border border-text rounded-2xl py-2 px-4 
+                                ${msg.userId === session?.user?.id ? 'bg-text text-white rounded-tr-none' : 'bg-white text-text rounded-tl-none'}
+                                ${msg.type === 'IMAGE' ? 'p-0 border-none bg-transparent' : ''}
+                                ${msg.isOptimistic ? 'opacity-50 italic' : ''}`}
+                            >
+
+                                {msg.type === 'CONFIRM' ? (
+                                    <div className="p-2">
+                                        {isBuyer ? (
+                                            <button onClick={buyerConfirmModal.onOpen} className="bg-main text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-transform">
+                                                ✅ 注文内容を確認する
+                                            </button>
+                                        ) : (
+                                            <div className="bg-gray-100 text-text px-4 py-2 rounded-lg italic text-sm">✅ 確認リンクを送信しました</div>
+                                        )}
+                                    </div>
+                                ) : msg.type === 'IMAGE' ? (
+                                    <Image src={msg.fileUrl!} alt="Chat" width={250} height={250} className="rounded-xl" />
+                                ) : (
+                                    <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
                 <div ref={messagesEndRef} />
             </div>
 
@@ -230,21 +247,15 @@ export default function Chat() {
                 </div>
             )}
 
-            {isBuyer && !hasConfirmationMessage && (
-                <div className="bg-blue-50 py-2 text-center text-xs text-blue-600 border-t">
-                    販売者が <b>@confirm</b> と入力すると注文確認へ進めます
-                </div>
-            )}
-
             {/* Input Area */}
             <div className="p-4 pb-8 flex gap-2 items-center bg-white border-t">
                 <button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
                     {uploading ? "..." : <Image width={28} height={28} alt="upload" src={imgIcon} />}
                 </button>
                 <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
-                
-                <input 
-                    value={message} 
+
+                <input
+                    value={message}
                     onChange={e => setMessage(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                     placeholder={isSeller ? "メッセージか @confirm を入力..." : "メッセージを入力..."}
@@ -259,7 +270,7 @@ export default function Chat() {
             </div>
 
             {/* --- Modals --- */}
-            
+
             {/* Buyer Confirmation Modal */}
             <Modal isOpen={buyerConfirmModal.isOpen} onOpenChange={buyerConfirmModal.onOpenChange} placement="center" backdrop="blur">
                 <ModalContent className="rounded-2xl bg-white p-6">

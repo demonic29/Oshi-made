@@ -74,7 +74,7 @@ export default function ConfirmPage() {
     };
 
     return (
-        <div className="flex flex-col items-center text-center justify-center h-screen gap-6 px-6">
+        <div className="flex flex-col items-center text-center justify-center h-screen gap-6">
             <h2 className="text-2xl font-bold">注文内容の確認</h2>
 
             {step === "phone" && (
@@ -102,20 +102,20 @@ export default function ConfirmPage() {
             )}
 
             {step === "otp" && (
-                <div className="space-y-4">
+                <div className="space-y-4 w-full overflow-hidden px-4">
                     <p className="text-sm text-gray-600">SMSで送られた6桁のコードを入力</p>
                     <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                        <InputOTPGroup><InputOTPSlot index={0} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={0} /></InputOTPGroup>
                         <InputOTPSeparator />
-                        <InputOTPGroup><InputOTPSlot index={1} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={1} /></InputOTPGroup>
                         <InputOTPSeparator />
-                        <InputOTPGroup><InputOTPSlot index={2} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={2} /></InputOTPGroup>
                         <InputOTPSeparator />
-                        <InputOTPGroup><InputOTPSlot index={3} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={3} /></InputOTPGroup>
                         <InputOTPSeparator />
-                        <InputOTPGroup><InputOTPSlot index={4} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={4} /></InputOTPGroup>
                         <InputOTPSeparator />
-                        <InputOTPGroup><InputOTPSlot index={5} /></InputOTPGroup>
+                        <InputOTPGroup><InputOTPSlot className="size-6" index={5} /></InputOTPGroup>
                     </InputOTP>
                 </div>
             )}
