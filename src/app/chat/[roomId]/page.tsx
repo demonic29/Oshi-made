@@ -282,7 +282,7 @@ export default function Chat() {
                         <p className="text-gray-500 text-sm mt-2">商品の内容を確認し、決済・確定ページへ進みます。よろしいですか？</p>
                     </ModalBody>
                     <ModalFooter className="flex gap-2">
-                        <Button variant="light" className="flex-1 border-text border" onClick={buyerConfirmModal.onClose}>戻る</Button>
+                        <Button className="flex-1 border-text border" onClick={buyerConfirmModal.onClose}>戻る</Button>
                         <Button className="flex-1 bg-main text-white font-bold" onClick={() => router.push(`/confirm?roomId=${roomId}`)}>確定ページへ</Button>
                     </ModalFooter>
                 </ModalContent>
@@ -293,7 +293,7 @@ export default function Chat() {
                 <ModalContent className="rounded-2xl p-6">
                     <ModalBody className="text-center"><p>作業を完了し、注文確認ページを確認しますか？</p></ModalBody>
                     <ModalFooter>
-                        <Button variant="light" onClick={sellerModal.onClose}>いいえ</Button>
+                        <Button onClick={sellerModal.onClose}>いいえ</Button>
                         <Button className="bg-main text-white" onClick={() => router.push('/confirm')}>はい</Button>
                     </ModalFooter>
                 </ModalContent>
