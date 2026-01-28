@@ -214,8 +214,8 @@ export default function Chat() {
                                 {msg.type === 'CONFIRM' ? (
                                     <div className="p-2">
                                         {isBuyer ? (
-                                            <button onClick={buyerConfirmModal.onOpen} className="bg-main text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-transform">
-                                                ✅ 注文内容を確認する
+                                            <button onClick={buyerConfirmModal.onOpen} className="underline italic text-main rounded-xl font-bold hover:scale-105 transition-transform">
+                                                注文内容を確認する
                                             </button>
                                         ) : (
                                             <div className="bg-gray-100 text-text px-4 py-2 rounded-lg italic text-sm">✅ 確認リンクを送信しました</div>

@@ -129,6 +129,13 @@ export default function ConfirmPage() {
             >
                 {loading ? "処理中..." : step === "phone" ? "本人確認へ進む" : "注文を確定する"}
             </Button>
+
+            <Button
+                className="border-gray-500 border text-text w-full max-w-xs py-6 text-lg rounded-xl"
+                onClick={() => router.back()}                
+            >
+                キャンセル
+            </Button>
         </div>
     );
 }

@@ -211,18 +211,16 @@ export default function ProfileHeader() {
                 <div className=''>
                     <h2 className="text-xl font-bold text-gray-800">{user?.name}</h2>
 
-                    <Button className='border border-main flex justify-center py-1 items-center px-3 mt-2' href="/profile/edit">
+                    {/* <Button className='border border-main flex justify-center py-1 items-center px-3 mt-2' href="/profile/edit">
                         <p className='text-[14px]'>アカウント設定</p>
-                    </Button>
+                    </Button> */}
 
                     <div className='flex mt-4 gap-2'>
-
-
                         {session.user.role === 'SELLER' && (
-                            <Button className='border border-main flex justify-center items-center' onClick={onOpen}>
+                            <button className='border border-main flex py-2 px-6 rounded-md justify-center items-center' onClick={onOpen}>
                                 <i className="text-[12px] fa-solid fa-plus"></i> 
                                 <p className='text-[12px]'>商品登録</p>
-                            </Button>
+                            </button>
                         )}
                     </div>
                 </div>
@@ -327,8 +325,8 @@ export default function ProfileHeader() {
                                             {categoryTypeLinks.map((category) => (
                                                 <div
                                                     key={category.href}
-                                                    onClick={() => setSelectedCategory(category.href)}
-                                                    className={`text-center transition-all cursor-pointer ${selectedCategory === category.href
+                                                    onClick={() => setSelectedCategory(category.name)}
+                                                    className={`text-center transition-all cursor-pointer ${selectedCategory === category.name
                                                         ? 'border-main bg-main/10'
                                                         : 'border-gray-300 hover:border-main/50'
                                                         }`}
@@ -355,8 +353,8 @@ export default function ProfileHeader() {
                                             {tasteOptions.map((taste) => (
                                                 <div
                                                     key={taste.value}
-                                                    onClick={() => setSelectedTaste(taste.value)}
-                                                    className={`text-center transition-all cursor-pointer ${selectedTaste === taste.value
+                                                    onClick={() => setSelectedTaste(taste.name)}
+                                                    className={`text-center transition-all cursor-pointer ${selectedTaste === taste.name
                                                         ? 'border-main bg-main/10'
                                                         : 'border-gray-300 hover:border-main/50'
                                                         }`}
@@ -407,11 +405,11 @@ export default function ProfileHeader() {
                                             </div>
                                             <div className='border-b pb-2 border-gray-300'>
                                                 <h3 className='text-[12px] text-pink-800'>カテゴリ</h3>
-                                                <p>{categoryTypeLinks.find(c => c.href === selectedCategory)?.name}</p>
+                                                <p>{categoryTypeLinks.find(c => c.name === selectedCategory)?.name}</p>
                                             </div>
                                             <div className='border-b pb-2 border-gray-300'>
                                                 <h3 className='text-[12px] text-pink-800'>テイスト</h3>
-                                                <p>{tasteOptions.find(t => t.value === selectedTaste)?.name}</p>
+                                                <p>{tasteOptions.find(t => t.name === selectedTaste)?.name}</p>
                                             </div>
                                         </div>
                                     </div>

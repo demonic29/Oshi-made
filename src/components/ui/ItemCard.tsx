@@ -178,18 +178,18 @@ export function ItemDetailCard({
                 <h1 className='text-2xl font-bold'>{item.name}</h1>
 
                 <div className='flex gap-2 mt-3'>
-                    <span className='text-sm bg-gray-100 px-3 py-1 rounded-full'>
+                    <span className='text-sm bg-gray-100 px-3 py-1 rounded-md'>
                         {item.taste}
                     </span>
-                    <span className='text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full'>
+                    <span className='text-sm bg-gray-100 px-3 py-1 rounded-md'>
                         {item.category}
                     </span>
                     {item.stock > 0 ? (
-                        <span className='text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full'>
+                        <span className='text-sm bg-text text-white px-3 py-1 rounded-md'>
                             在庫あり
                         </span>
                     ) : (
-                        <span className='text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full'>
+                        <span className='text-sm bg-red-100 text-red-700 px-3 py-1 rounded-md'>
                             売り切れ
                         </span>
                     )}
