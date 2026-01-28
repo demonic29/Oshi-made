@@ -2,10 +2,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth, authOptions } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+
 import { getServerSession } from 'next-auth';
+
+// upload images to supabase storage ( product-images )
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,33 +36,38 @@ export async function POST(request: NextRequest) {
         if (!images || images.length === 0 || !name || !description || !category || !taste) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-
-        // Create uploads directory if it doesn't exist
-        const uploadsDir = join(process.cwd(), 'public', 'uploads');
-        if (!existsSync(uploadsDir)) {
-            await mkdir(uploadsDir, { recursive: true });
-        }
+    
 
         // CHANGED: Process and save all images
         const imageUrls: string[] = [];
-        
+
         for (const image of images) {
-            // Validate that it's actually a file
-            if (!(image instanceof File)) continue;
-            
-            // Save image to public/uploads folder
-            const bytes = await image.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-            
-            // Create unique filename
-            const timestamp = Date.now();
-            const randomSuffix = Math.random().toString(36).substring(7);
-            const filename = `${timestamp}-${randomSuffix}-${image.name.replace(/\s+/g, '-')}`;
-            const filepath = join(uploadsDir, filename);
-            
-            await writeFile(filepath, buffer);
-            imageUrls.push(`/uploads/${filename}`);
+        if (!(image instanceof File)) continue;
+
+        const ext = image.name.split('.').pop();
+        const fileName = `${sellerId}/${crypto.randomUUID()}.${ext}`;
+
+        const buffer = Buffer.from(await image.arrayBuffer());
+
+        const { error } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, buffer, {
+                contentType: image.type,
+                upsert: false,
+            });
+
+        if (error) {
+            console.error(error);
+            continue;
         }
+
+        const { data } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName);
+
+        imageUrls.push(data.publicUrl);
+        }
+
 
         // Validate that at least one image was successfully uploaded
         if (imageUrls.length === 0) {

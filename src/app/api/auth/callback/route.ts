@@ -8,8 +8,6 @@ export async function GET(request: Request) {
     const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/'
 
-    
-
     if (code) {
         const { error } = await (await supabase()).auth.exchangeCodeForSession(code)
         
