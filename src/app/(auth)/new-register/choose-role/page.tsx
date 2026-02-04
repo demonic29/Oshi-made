@@ -2,6 +2,9 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth"; // Import from helper
+import AuthHeader from "../../components/_AuthHeader";
+import { User } from "iconsax-reactjs";
+import { ShoppingBag } from "lucide-react";
 
 export default async function RoleSelectionPage() {
     const session = await auth();
@@ -53,22 +56,17 @@ export default async function RoleSelectionPage() {
     }
 
     return (
-        <div className="p-4 flex flex-col justify-center items-center mt-20 bg-[#fffdfa] h-full">
+        <div className="p-4 flex flex-col justify-center h-dvh overflow-hidden bg-[#fffdfa]">
             
-            <div>
-                <h1 className="text-2xl font-bold mb-6">新規アカウント登録</h1>
+            <AuthHeader title="役割" desc="役割を決めた上お進みください"/>
             
-                <p className="text-sm text-gray-900 font-bold mb-4">
-                    利用方法
-                </p>
-            </div>
-            
-            <div className="space-y-4 flex gap-20">
+            <div className="space-y-4 ps-8 flex gap-8">
                 <form action={selectSeller}>
                     <button 
                         type="submit"
-                        className="w-full underline text-main  py-3 rounded-lg "
+                        className="w-32 h-32 text-[13px] flex flex-col justify-center items-center bg-gray-100 gap-2 text-text  rounded-full "
                     >
+                        <User size="32" className="text-main"/>
                         作家
                     </button>
                 </form>
@@ -76,8 +74,9 @@ export default async function RoleSelectionPage() {
                 <form action={selectBuyer}>
                     <button 
                         type="submit"
-                        className="w-full underline  text-main py-3 rounded-lg"
+                        className="w-32 h-32 text-[13px] flex flex-col justify-center items-center gap-2 bg-gray-100 text-text rounded-full"
                     >
+                        <ShoppingBag size="32" className="text-main"/>
                         購入者
                     </button>
                 </form>

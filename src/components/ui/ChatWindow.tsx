@@ -6,9 +6,7 @@ import HeaderBar from './HeaderBar'
 import { useEffect, useState } from 'react'
 
 import logo from '@/app/assets/imgs/logo.png';
-import { Message } from '@/app/chat/[roomId]/roomType'
 import { useSession } from 'next-auth/react'
-import Loading from './Loading'
 import GlobalButton from '../GlobalButton'
 
 type Room = {
@@ -66,7 +64,7 @@ export default function ChatPage() {
 
 
     return (
-        <div>
+        <div className='min-h-dvh'>
             <HeaderBar title='チャット' />
 
             <div className="p-2">
@@ -96,7 +94,8 @@ export default function ChatPage() {
                         {rooms.map((room) => {
 
                             const otherUser = room.isBuyer ? room.seller : room.buyer;
-                            const currentUserIs = room.isBuyer ? 'buyer' : "seller";
+
+                            // const currentUserIs = room.isBuyer ? 'buyer' : "seller";
 
                             return (
                                 <Link
@@ -104,7 +103,7 @@ export default function ChatPage() {
                                     href={`/chat/${room.id}`}
                                     className="flex items-center gap-3 border-b border-b-gray-300 py-6"
                                 >
-                                    <div className='relative border border-main overflow-hidden rounded-full p-2 w-[50px] h-[50px]'>
+                                    <div className='relative border border-main overflow-hidden rounded-full p-2 w-12.5 h-12.5'>
                                         <Image
                                             src={otherUser.image || logo}
                                             alt={otherUser.name || 'ユーザー名'}

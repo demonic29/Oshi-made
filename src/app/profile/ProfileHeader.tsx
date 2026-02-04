@@ -18,7 +18,7 @@ export default function ProfileHeader() {
 
     const { data: session, status } = useSession();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [modalPlacement, setModalPlacement] = useState<"bottom" | "center" | "auto" | "top" | "top-center" | "bottom-center">("bottom-center");
+    const [modalPlacement] = useState<"bottom" | "center" | "auto" | "top" | "top-center" | "bottom-center">("bottom-center");
 
     // Multi-step state
     const [step, setStep] = useState(1);
@@ -135,7 +135,7 @@ export default function ProfileHeader() {
             const formData = new FormData();
 
             // CHANGED: Append multiple images
-            productImages.forEach((image, index) => {
+            productImages.forEach((image) => {
                 formData.append('images', image);
             });
 
@@ -227,22 +227,22 @@ export default function ProfileHeader() {
             </div>
 
             {/* Multi-step Modal */}
-            <Modal isOpen={isOpen} placement={modalPlacement} hideCloseButton={true} onOpenChange={handleModalClose} className='bg-white h-screen'>
-                <ModalContent className='pt-2'>
+            <Modal isOpen={isOpen} placement={modalPlacement} hideCloseButton={true} onOpenChange={handleModalClose} className='bg-white min-h-dvh overflow-y-scroll'>
+                <ModalContent className='pt-2 flex flex-col'>
                     {(onClose) => (
                         <>
                             <ModalHeader className='px-4 py-0'>
                                 <HeaderBar title='商品登録' />
                             </ModalHeader>
 
-                            <ModalBody className='px-4 overflow-y-auto'>
+                            <ModalBody className='px-4 flex-1 overscroll-contain overflow-y-scroll'>
                                 {/* Step 1: Basic Information */}
                                 {step === 1 && (
                                     <div className='grid gap-4'>
                                         {/* CHANGED: Multiple image upload UI */}
                                         <div className="grid gap-2">
-                                            <label className='text-sm font-semibold'>
-                                                商品画像 ({imagePreviews.length}/5)
+                                            <label className='text-[12px]'>
+                                                商品画像 ( 最大 5 枚まで )
                                             </label>
 
                                             <div className="grid grid-cols-3 gap-2">
@@ -287,8 +287,8 @@ export default function ProfileHeader() {
                                             />
                                         </div>
 
-                                        <div className='flex flex-col gap-2'>
-                                            <label htmlFor="productName" className='text-sm font-semibold'>商品名</label>
+                                        <div className='flex flex-col gap-2 mt-4'>
+                                            <label htmlFor="productName" className='text-[12px]'>商品名</label>
                                             <input
                                                 type="text"
                                                 id='productName'
@@ -300,8 +300,8 @@ export default function ProfileHeader() {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-2">
-                                            <label htmlFor="productDescription" className="text-sm font-semibold">
+                                        <div className="flex flex-col gap-2 mt-4">
+                                            <label htmlFor="productDescription" className="text-[12px]">
                                                 商品説明
                                             </label>
                                             <textarea
@@ -416,7 +416,7 @@ export default function ProfileHeader() {
                                 )}
                             </ModalBody>
 
-                            <ModalFooter className="flex px-4 pb-3 justify-between">
+                            <ModalFooter className="px-4 pb-3 sticky bottom-0 bg-white shrink-0">
                                 <div className="flex flex-1 w-full gap-4 justify-between">
                                     {step > 1 && (
                                         <Button className='border' onClick={handleBack}>

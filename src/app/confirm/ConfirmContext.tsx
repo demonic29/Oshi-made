@@ -66,7 +66,7 @@ export default function ConfirmContent() {
 
             if (!res.ok) throw new Error("オーダー作成に失敗しました");
             router.push('/cart');
-        } catch (err) {
+        } catch {
             setError("エラーが発生しました");
         } finally {
             setLoading(false);
@@ -74,8 +74,8 @@ export default function ConfirmContent() {
     };
 
     return (
-        <div className="flex flex-col items-center text-center justify-center h-screen gap-6">
-            <h2 className="text-2xl font-bold">注文内容の確認</h2>
+        <div className="flex flex-col items-center text-center justify-center h-dvh gap-6">
+            <h2 className="text-2xl">注文内容の確認</h2>
 
             {step === "phone" && (
                 <div className="w-full max-w-xs space-y-4">
@@ -123,7 +123,7 @@ export default function ConfirmContent() {
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <Button
-                className="bg-main text-white w-full max-w-xs py-6 text-lg rounded-xl"
+                className="bg-main text-white w-full max-w-xs py-6 text-lg rounded-full"
                 onClick={step === "phone" ? sendOtp : verifyOtp}
                 disabled={loading || (step === "otp" && otp.length !== 6)}
             >
@@ -131,7 +131,7 @@ export default function ConfirmContent() {
             </Button>
 
             <Button
-                className="border-gray-500 border text-text w-full max-w-xs py-6 text-lg rounded-xl"
+                className="border-gray-500 border text-text w-full max-w-xs py-6 text-lg rounded-full"
                 onClick={() => router.back()}
             >
                 キャンセル

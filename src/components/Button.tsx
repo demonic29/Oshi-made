@@ -14,19 +14,18 @@ const Button: React.FC<ButtonProps> = ({
     onClick,
     className,
     href,
-    title
 }) => {
 
     if(href){
         return (
-            <Link href={href} onClick={onClick} className={`${className} w-full rounded-lg py-3`}>
+            <Link href={href} onClick={onClick} className={`${className} w-full rounded-full  py-3`}>
                 {children}
             </Link>
         )
     }
 
     return(
-        <button onClick={onClick} className={`${className} w-full rounded-lg py-3`}>
+        <button onClick={onClick} className={`${className} w-full rounded-full  py-3`}>
             {children}
         </button>
     )

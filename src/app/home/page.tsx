@@ -7,7 +7,6 @@ import BottomTabs from '@/components/ui/BottomTabs';
 import '@/app/globals.css'
 import Image from 'next/image';
 import logo from '../assets/imgs/logo.png'
-import { ProductSkeleton } from '@/components/Skeleton';
 
 interface Product {
     id: string;

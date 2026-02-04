@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { useSession } from 'next-auth/react';
 
 // UI Components
 import HeaderBar from "@/components/ui/HeaderBar";
 import { Modal, ModalBody, ModalContent, ModalFooter, useDisclosure } from "@heroui/modal";
 import { Button } from "@/components/ui/button";
-import { ShopAdd, ShoppingBag } from "iconsax-reactjs";
+import { Link2, ShoppingBag } from "iconsax-reactjs";
 
 // Assets & Libs
 import imgIcon from '@/app/assets/imgs/img-icon.png';
@@ -50,8 +49,9 @@ export default function Chat() {
     // --- Helpers ---
     const isSeller = session?.user?.id === room?.sellerId;
     const isBuyer = session?.user?.id === room?.buyerId;
-    const canSend = isSeller || isBuyer;
-    const hasConfirmationMessage = useMemo(() => messages.some(m => m.type === 'CONFIRM'), [messages]);
+
+    // const canSend = isSeller || isBuyer;
+    // const hasConfirmationMessage = useMemo(() => messages.some(m => m.type === 'CONFIRM'), [messages]);
 
     /* ----------------------------- DATA FETCHING ----------------------------- */
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function Chat() {
 
                 setRoom(await roomRes.json());
                 setMessages(await msgRes.json());
-            } catch (e) {
+            } catch {
                 setError("チャットの読み込みに失敗しました");
             } finally {
                 setLoading(false);
@@ -154,7 +154,7 @@ export default function Chat() {
             });
             const saved = await res.json();
             setMessages(prev => prev.map(m => m.id === tempId ? saved : m));
-        } catch (err) {
+        } catch  {
             setMessages(prev => prev.filter(m => m.id !== tempId));
             alert("送信に失敗しました");
         } finally {
@@ -182,7 +182,7 @@ export default function Chat() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ roomId, type: 'IMAGE', fileUrl: data.publicUrl })
             });
-        } catch (error) {
+        } catch {
             alert("アップロードに失敗しました");
         } finally {
             setUploading(false);
@@ -194,7 +194,7 @@ export default function Chat() {
     if (error || !room) return <div className="h-screen flex items-center justify-center"><p>{error || "Error loading room"}</p></div>;
 
     return (
-        <div className={`flex flex-col h-screen ${(sellerModal.isOpen || buyerConfirmModal.isOpen) && 'bg-gray-100'}`}>
+        <div className={`flex flex-col h-dvh ${(sellerModal.isOpen || buyerConfirmModal.isOpen) && 'bg-gray-100 opacity-5'}`}>
             <div className="px-4"><HeaderBar title={room.otherUser.name ?? "Chat"} /></div>
 
             {/* Message List */}
@@ -212,19 +212,22 @@ export default function Chat() {
                             >
 
                                 {msg.type === 'CONFIRM' ? (
-                                    <div className="p-2">
+                                    <div className="">
                                         {isBuyer ? (
-                                            <button onClick={buyerConfirmModal.onOpen} className="underline italic text-main rounded-xl font-bold hover:scale-105 transition-transform">
+                                            <button onClick={buyerConfirmModal.onOpen} className="underline text-main rounded-xl text-[13px] hover:scale-105 transition-transform">
                                                 注文内容を確認する
                                             </button>
                                         ) : (
-                                            <div className="bg-gray-100 text-text px-4 py-2 rounded-lg italic text-sm">✅ 確認リンクを送信しました</div>
+                                            <div className="text-blue-200 px-4 py-1 underline flex items-center text-sm">
+                                                <Link2 size="24" className="text-blue-200 me-2"/>
+                                                確認リンクを送信しました
+                                            </div>
                                         )}
                                     </div>
                                 ) : msg.type === 'IMAGE' ? (
                                     <Image src={msg.fileUrl!} alt="Chat" width={250} height={250} className="rounded-xl" />
                                 ) : (
-                                    <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                                    <p className="whitespace-pre-wrap wrap-break-word">{msg.content}</p>
                                 )}
                             </div>
                         </div>
@@ -250,7 +253,9 @@ export default function Chat() {
             {/* Input Area */}
             <div className="p-4 pb-8 flex gap-2 items-center bg-white border-t">
                 <button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-                    {uploading ? "..." : <Image width={28} height={28} alt="upload" src={imgIcon} />}
+                    {uploading ? 
+                            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-main'></div>
+                    : <Image width={28} height={28} alt="upload" src={imgIcon} />}
                 </button>
                 <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
 
@@ -262,11 +267,6 @@ export default function Chat() {
                     className="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-main"
                 />
 
-                {isSeller && (
-                    <button onClick={sellerModal.onOpen} className="text-main">
-                        <ShopAdd size={32} variant="Bulk" />
-                    </button>
-                )}
             </div>
 
             {/* --- Modals --- */}
@@ -282,8 +282,8 @@ export default function Chat() {
                         <p className="text-gray-500 text-sm mt-2">商品の内容を確認し、決済・確定ページへ進みます。よろしいですか？</p>
                     </ModalBody>
                     <ModalFooter className="flex gap-2">
-                        <Button className="flex-1 border-text border" onClick={buyerConfirmModal.onClose}>戻る</Button>
-                        <Button className="flex-1 bg-main text-white font-bold" onClick={() => router.push(`/confirm?roomId=${roomId}`)}>確定ページへ</Button>
+                        <Button className="flex-1 rounded-full border-text border" onClick={buyerConfirmModal.onClose}>戻る</Button>
+                        <Button className="flex-1 rounded-full bg-main text-white" onClick={() => router.push(`/confirm?roomId=${roomId}`)}>確定ページへ</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
