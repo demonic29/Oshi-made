@@ -35,11 +35,11 @@ export default function ProfileCard() {
             try {
                 setIsLoadingFavorites(true);
                 const response = await fetch('/api/favorite');
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch favorites');
                 }
-                
+
                 const data = await response.json();
                 setFavoriteProducts(data.products || []);
             } catch (err) {
@@ -65,7 +65,7 @@ export default function ProfileCard() {
 
             try {
                 setIsLoadingUserProducts(true);
-                
+
                 // IMPORTANT: Pass userId as query parameter
                 const response = await fetch(`/api/product`);
 
@@ -86,16 +86,16 @@ export default function ProfileCard() {
     }, [session?.user?.id, status, userRole]);
 
     return (
-        <div className="flex flex-col min-h-screen px-4">
-            <HeaderBar title='アカウント'/>
-            
+        <div className="flex flex-col overflow-y-scroll px-4">
+            <HeaderBar title='アカウント' />
+
             <div className="">
-                <ProfileHeader/>
+                <ProfileHeader />
 
                 {/* Favorite Products Section */}
                 <section className='mt-6'>
                     <div className='flex items-center justify-between mb-3'>
-                        <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>    
+                        <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>
                             お気に入りの商品
                         </h2>
                         {favoriteProducts.length > 0 && (
@@ -104,7 +104,7 @@ export default function ProfileCard() {
                             </span>
                         )}
                     </div>
-                    
+
                     {isLoadingFavorites ? (
                         <div className='flex items-center justify-center py-12'>
                             <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-main'></div>
@@ -121,14 +121,14 @@ export default function ProfileCard() {
                         <div className='flex gap-3 overflow-x-auto pb-2 no-scrollbar'>
                             {favoriteProducts.map((product) => (
                                 <div key={product.id} className='shrink-0 w-40'>
-                                    <ItemCard                                           
+                                    <ItemCard
                                         id={product.id}
                                         name={product.name}
                                         description={product.description}
                                         images={product.images}
                                         category={product.category}
                                         taste={product.taste}
-                                        stock={product.stock}                                        
+                                        stock={product.stock}
                                     />
                                 </div>
                             ))}
@@ -140,7 +140,7 @@ export default function ProfileCard() {
                 {currentUser && userRole === 'SELLER' ? (
                     <section className='mt-8'>
                         <div className='flex items-center justify-between mb-3'>
-                            <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>                               
+                            <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>
                                 出品した商品
                             </h2>
                             {userProducts.length > 0 && (
@@ -159,31 +159,33 @@ export default function ProfileCard() {
                                 <p className='text-gray-500 text-sm mb-4'>まだ出品した商品がありません</p>
                             </div>
                         ) : (
-                            <div className='grid grid-cols-2 gap-3'>
-                                {userProducts.map((product) => (
-                                    <ItemCard
-                                        key={product.id}
-                                        id={product.id}
-                                        name={product.name}
-                                        description={product.description}
-                                        images={product.images}
-                                        category={product.category}
-                                        taste={product.taste}
-                                        stock={product.stock}
-                                    />
-                                ))}
+                            <div className='flex overflow-x-auto gap-3'>
+                                <div className='max-w-44 flex gap-4'>
+                                    {userProducts.map((product) => (
+                                        <ItemCard
+                                            key={product.id}
+                                            id={product.id}
+                                            name={product.name}
+                                            description={product.description}
+                                            images={product.images}
+                                            category={product.category}
+                                            taste={product.taste}
+                                            stock={product.stock}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </section>
-                ): ''}
+                ) : ''}
 
                 {/* Sign Out Section */}
                 <div className='mt-8'>
-                    <SignOutButton/>
+                    <SignOutButton />
                 </div>
             </div>
 
-            <BottomTabs/>
+            <BottomTabs />
         </div>
     );
 }

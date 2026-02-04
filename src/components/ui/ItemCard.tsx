@@ -23,7 +23,7 @@ interface ItemCardProps {
 
 export function ItemCard({ id, name, images, taste, }: ItemCardProps) {
     return (
-        <Link href={`/products/${id}`} className='block w-full mb-2'>
+        <Link href={`/products/${id}`} className='block min-w-full mb-2 shrink-0'>
             <div className='relative w-full h-48 overflow-hidden rounded-lg'>
                 <Image
                     src={images[0] ?? 'nope'}
