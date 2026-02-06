@@ -1,5 +1,6 @@
 'use client'
 
+import { ItemCardSkeleton } from '@/components/ItemCardSkeleton';
 import HeaderBar from '@/components/ui/HeaderBar'
 import { ItemCard } from '@/components/ui/ItemCard'
 import { Product } from '@prisma/client';
@@ -50,20 +51,25 @@ export default function ProductUploadPage() {
         <div className='px-4'>
             <HeaderBar title='商品一覧' />
 
-            <div className='grid grid-cols-2 gap-4'>
-                {userProducts.map((product) => (
-                    <ItemCard
-                        key={product.id}
-                        id={product.id}
-                        name={product.name}
-                        description={product.description}
-                        images={product.images}
-                        category={product.category}
-                        taste={product.taste}
-                        stock={product.stock}
-                    />
-                ))}
+            <div className="grid grid-cols-2 gap-4">
+                {isLoadingUserProducts
+                    ? Array.from({ length: 6 }).map((_, i) => (
+                        <ItemCardSkeleton key={i} />
+                    ))
+                    : userProducts.map((product) => (
+                        <ItemCard
+                            key={product.id}
+                            id={product.id}
+                            name={product.name}
+                            description={product.description}
+                            images={product.images}
+                            category={product.category}
+                            taste={product.taste}
+                            stock={product.stock}
+                        />
+                    ))}
             </div>
+
         </div>
     )
 }
