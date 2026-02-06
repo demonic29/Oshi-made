@@ -23,13 +23,14 @@ interface ItemCardProps {
 
 export function ItemCard({ id, name, images, taste, }: ItemCardProps) {
     return (
-        <Link href={`/products/${id}`} className='block min-w-full mb-2 shrink-0'>
+        <Link href={`/products/${id}`} className='block min-w-full mb-2 shrink-0' prefetch={true}>
             <div className='relative w-full h-48 overflow-hidden rounded-lg'>
                 <Image
                     src={images[0] ?? 'nope'}
-                    loading='eager'
                     alt={name}
+                    loading='lazy'
                     fill
+                    quality={75} // reduce image quality for performance
                     style={{ objectFit: 'cover' }}
                 />
             </div>
@@ -38,15 +39,6 @@ export function ItemCard({ id, name, images, taste, }: ItemCardProps) {
             </div>
             <div className='mt-2'>
                 <h3 className='text-[13px] line-clamp-2'>{name}</h3>
-
-                {/* --- stock --- */}
-                {/* <div className='flex gap-2 mt-2'>
-                    {stock > 0 ? (
-                        <span className='text-[10px] bg-accent px-2 py-1 rounded'>在庫あり</span>
-                    ) : (
-                        <span className='text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded'>売り切れ</span>
-                    )}
-                </div> */}
             </div>
         </Link>
     );
@@ -144,11 +136,12 @@ export function ItemDetailCard({
             <div className="relative w-full h-96">
                 <Image
                     src={activeImage}
-                    loading='eager'
+                    loading='lazy'
+                    quality={75}
                     alt={item.name}
                     fill
                     className="object-cover"
-                    priority
+                    
                 />
             </div>
 

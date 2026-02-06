@@ -24,11 +24,6 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const links = [
-        { href: '/home/pickup', label: 'おすすめ' },
-        { href: '/home/category', label: 'ピックアップ' },
-    ];
-
     // Fetch products from API
     useEffect(() => {
         const fetchProducts = async () => {
@@ -63,26 +58,16 @@ export default function Home() {
                         width={100}
                         height={100}
                         objectFit='contain'
+                        loading='lazy'
+                        quality={75}
                     />
                 </h1>
-
-                <div className='flex gap-16 mt-4 justify-center'>
-                    {
-                        links.map((link) => (
-                            <Link href={link.href} key={link.label} className='font-semibold text-[14px]'>
-                                {link.label}
-                            </Link>
-                        ))
-                    }
-                </div>
                 
                 {   
                     isLoading ? (
-                        <p className='text-center mt-8 text-main font-bold'>しばらくお待ち下さい。。</p>                        
+                        <p className='flex justify-center items-center h-dvh text-main font-bold '>しばらくお待ち下さい。。</p>                        
                     ) : error ? (
                         <p className='text-center mt-8 text-red-500'>{error}</p>
-                    ) : products.length === 0 ? (
-                        <p className='text-center mt-8 text-gray-500'>まだ商品がありません</p>
                     ) : (
                         <div className='grid grid-cols-2 gap-4 mt-8 pb-24'>
                             {

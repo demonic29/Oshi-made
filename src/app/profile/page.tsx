@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Product } from '@prisma/client';
 import BottomTabs from '@/components/ui/BottomTabs';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function ProfileCard() {
     const { data: session, status } = useSession();
@@ -86,7 +87,7 @@ export default function ProfileCard() {
     }, [session?.user?.id, status, userRole]);
 
     return (
-        <div className="flex flex-col overflow-y-scroll px-4">
+        <div className="flex flex-col overflow-y-auto pb-37.5 px-4">
             <HeaderBar title='アカウント' />
 
             <div className="">
@@ -143,11 +144,9 @@ export default function ProfileCard() {
                             <h2 className='font-semibold text-text border-b-main border-b-2 text-base flex items-center gap-2'>
                                 出品した商品
                             </h2>
-                            {userProducts.length > 0 && (
-                                <span className='text-xs text-gray-500'>
-                                    {userProducts.length}件
-                                </span>
-                            )}
+                            <Link href="/profile/product-upload" className='text-sm text-main'>
+                                    商品一覧見る &gt;
+                            </Link>
                         </div>
 
                         {isLoadingUserProducts ? (
@@ -159,8 +158,8 @@ export default function ProfileCard() {
                                 <p className='text-gray-500 text-sm mb-4'>まだ出品した商品がありません</p>
                             </div>
                         ) : (
-                            <div className='flex overflow-x-auto gap-3'>
-                                <div className='max-w-44 flex gap-4'>
+                            <div className=''>
+                                <div className='grid grid-cols-2 gap-4'>
                                     {userProducts.map((product) => (
                                         <ItemCard
                                             key={product.id}

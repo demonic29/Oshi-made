@@ -9,17 +9,16 @@
   --color-accent: #D9E6F6;
   --color-text: #50443A;
 }
-/* 
+
 body {
     font-family:"Zen Maru Gothic", sans-serif;
     background-color: #fffdefa;
-} */
-
-body {
-    font-family:"Bahnschrift", sans-serif;
-    background-color: #fffdefa;
 }
 
+/* body {
+    font-family:"Bahnschrift", sans-serif;
+    background-color: #fffdefa;
+} */
 
 .list-title{
     font-size: 16px;

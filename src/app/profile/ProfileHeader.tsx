@@ -227,7 +227,7 @@ export default function ProfileHeader() {
             </div>
 
             {/* Multi-step Modal */}
-            <Modal isOpen={isOpen} placement={modalPlacement} hideCloseButton={true} onOpenChange={handleModalClose} className='bg-white min-h-dvh overflow-y-scroll'>
+            <Modal isOpen={isOpen} placement={modalPlacement} hideCloseButton={true} onOpenChange={handleModalClose} className='bg-white max-h-dvh'>
                 <ModalContent className='pt-2 flex flex-col'>
                     {(onClose) => (
                         <>
@@ -235,7 +235,7 @@ export default function ProfileHeader() {
                                 <HeaderBar title='商品登録' />
                             </ModalHeader>
 
-                            <ModalBody className='px-4 flex-1 overscroll-contain overflow-y-scroll'>
+                            <ModalBody className='px-4 pb-[40vh] overflow-y-scroll'>
                                 {/* Step 1: Basic Information */}
                                 {step === 1 && (
                                     <div className='grid gap-4'>
@@ -416,7 +416,7 @@ export default function ProfileHeader() {
                                 )}
                             </ModalBody>
 
-                            <ModalFooter className="px-4 pb-3 sticky bottom-0 bg-white shrink-0">
+                            <ModalFooter className="px-4 pb-3 bg-white">
                                 <div className="flex flex-1 w-full gap-4 justify-between">
                                     {step > 1 && (
                                         <Button className='border' onClick={handleBack}>

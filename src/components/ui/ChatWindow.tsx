@@ -39,11 +39,11 @@ export default function ChatPage() {
 
     useEffect(() => {
 
-        if (status !== 'authenticated') return;
-
         const fetchRoomData = async () => {
             try {
-                const res = await fetch('/api/rooms')
+                const res = await fetch('/api/rooms', {
+                    cache:'no-store'
+                })
 
                 if (!res.ok) {
                     throw new Error('Failed to fetch rooms')
@@ -68,7 +68,9 @@ export default function ChatPage() {
             <HeaderBar title='チャット' />
 
             <div className="p-2">
-                {isLoading ? (
+                {rooms.length === 0 && !isLoading ? (
+                    <p className='flex text-main justify-center items-center h-screen'>チャットルームがありません</p>
+                ) : isLoading ? (
                     <p className='flex text-main justify-center items-center h-screen'>少々お待ちを。。。</p>
                 ) : status !== 'authenticated' ? (
                     <div className=''>
@@ -109,7 +111,8 @@ export default function ChatPage() {
                                             alt={otherUser.name || 'ユーザー名'}
                                             fill
                                             className="object-cover"
-                                            loading='eager'
+                                            loading='lazy'
+                                            quality={75}
                                         />
                                     </div>
 
