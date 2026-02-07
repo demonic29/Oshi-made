@@ -74,8 +74,6 @@ export default function ChatPage() {
                     <p className='flex text-main justify-center items-center h-screen'>少々お待ちを。。。</p>
                 ) : status !== 'authenticated' ? (
                     <div className=''>
-                        <HeaderBar title='チャット' />
-
                         <div className='flex flex-col overflow-hidden gap-4 justify-center items-center h-screen'>
                             <div className='text-center mb-6'>
                                 <p className='text-lg font-bold mb-2'>このチャットは会員のみになっています。</p>

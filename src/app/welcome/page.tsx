@@ -66,7 +66,7 @@ const Welcome = () => {
 
             {/* Footer */}
             <div className="relative w-full">
-                <div className="bottom-44 absolute w-full">
+                <div className="bottom-16 absolute w-full">
                     {currentIndex === screens.length - 1 && (
                         <>
                             <Link

@@ -9,22 +9,23 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?    @unique
-  password      String?
-  role          Role?
-  phone         String?    @unique
-  supabaseId    String?    @unique
-  image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  email         String?   @unique
+  emailVerified DateTime? // ✅ ADD THIS
+  password   String?
+  role       Role?
+  phone      String?  @unique
+  supabaseId String?  @unique
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  messages      Message[]
-  orders        Order[]
-  favorites     Favorite[]
+  accounts  Account[]
+  sessions  Session[]
+  messages  Message[]
+  orders    Order[]
+  favorites Favorite[]
 
   // Chat relations
   buyerRooms  Room[] @relation("BuyerRooms")
