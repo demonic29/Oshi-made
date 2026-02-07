@@ -89,8 +89,8 @@ export default function LoginPage() {
 
                         <p className='text-center text-[12px] mt-8'>
                             アカウントお持ちのない方 -
-                            <Link href="/new-register" className='text-main ps-1 underline'>
-                                新規登録
+                            <Link href="/register" className='text-main ps-1 underline'>
+                                会員登録
                             </Link>
                         </p>
                     </form>
